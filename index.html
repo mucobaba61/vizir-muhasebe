@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>VIZIR Muhasebe</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f2f4f8;color:#182235;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif}
+header{background:#15294c;color:white;padding:20px 16px}
+header h2{margin:0}
+nav{display:flex;background:white;padding:8px;gap:6px}
+nav button{flex:1;padding:13px 4px;border:0;border-radius:10px;background:#e9edf5;font-weight:bold}
+nav button.active{background:#15294c;color:white}
+main{padding:14px;max-width:650px;margin:auto}
+.card{background:white;border-radius:15px;padding:15px;margin-bottom:12px;box-shadow:0 2px 9px #0000000b}
+h3{margin:0 0 12px}
+.line{display:flex;gap:8px;align-items:center}
+input{min-width:0;width:100%;padding:14px;border:1px solid #d9dfeb;border-radius:10px;font-size:17px}
+button{cursor:pointer}
+.action{border:0;border-radius:10px;padding:13px 18px;font-size:18px;font-weight:bold;background:#15294c;color:white}
+.green{background:#13865b}
+.red{background:#c94444}
+.small{font-size:13px;color:#697487}
+.amount{font-size:25px;font-weight:800}
+.item{border-bottom:1px solid #eee;padding:12px 0}
+.item:last-child{border:0}
+.hidden{display:none}
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.summary .card{margin:0}
+</style>
+</head>
+<body>
+<header><h2>VIZIR MUHASEBE</h2><div class="small" style="color:#ccd6e6">Kişisel finans takip sistemi</div></header>
+<nav>
+<button class="active" onclick="tab('quick',this)">Hızlı İşlem</button>
+<button onclick="tab('debts',this)">Borçlar</button>
+<button onclick="tab('report',this)">Genel Durum</button>
+</nav>
+<main>
+<section id="quick">
+<div class="card"><h3>Dükkan Gelir</h3><div class="line"><input id="income" type="number" inputmode="decimal" placeholder="Tutar ₺"><button class="action green" onclick="add('income')">+</button></div></div>
+<div class="card"><h3>Dükkan Gider</h3><div class="line"><input id="shop" type="number" inputmode="decimal" placeholder="Tutar ₺"><button class="action red" onclick="add('shop')">+</button></div></div>
+<div class="card"><h3>Şahsi Gider</h3><div class="line"><input id="personal" type="number" inputmode="decimal" placeholder="Tutar ₺"><button class="action red" onclick="add('personal')">+</button></div></div>
+<div class="card"><h3>Son İşlemler</h3><div id="history"></div></div>
+</section>
+<section id="debts" class="hidden">
+<div class="card"><h3>Yeni Borç</h3><input id="debtName" placeholder="Kişi / Firma adı"><div class="line" style="margin-top:8px"><input id="debtAmount" type="number" placeholder="Borç tutarı ₺"><button class="action" onclick="newDebt()">Ekle</button></div></div>
+<div class="card"><h3>Borç Listesi</h3><div id="debtList"></div></div>
+</section>
+<section id="report" class="hidden">
+<div class="summary">
+<div class="card"><div class="small">Dükkan Gelir</div><div class="amount" id="rIncome">0 ₺</div></div>
+<div class="card"><div class="small">Dükkan Gider</div><div class="amount" id="rShop">0 ₺</div></div>
+<div class="card"><div class="small">Şahsi Gider</div><div class="amount" id="rPersonal">0 ₺</div></div>
+<div class="card"><div class="small">Kalan Borç</div><div class="amount" id="rDebt">0 ₺</div></div>
+</div>
+<div class="card" style="margin-top:12px"><h3>Gelir - Gider</h3><div class="amount" id="rBalance">0 ₺</div></div>
+<div class="card"><h3>Yedekleme</h3><button class="action" onclick="backup()">Yedek İndir</button><p class="small">Verilerini düzenli olarak yedekle.</p></div>
+</section>
+</main>
+<script>
+const KEY="vizir_muhasebe_v1";
+let db;
+try{db=JSON.parse(localStorage.getItem(KEY))||{transactions:[],debts:[]}}catch(e){db={transactions:[],debts:[]}}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+function money(n){return Number(n).toLocaleString("tr-TR",{style:"currency",currency:"TRY"})}
+function tab(id,btn){
+document.querySelectorAll("main section").forEach(x=>x.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+btn.classList.add("active");render();
+}
+function add(type){
+let el=document.getElementById(type),n=Number(el.value);
+if(!Number.isFinite(n)||n<=0)return alert("Geçerli tutar gir.");
+db.transactions.unshift({id:Date.now()+Math.random(),type,amount:n,date:new Date().toISOString()});
+el.value="";save();
+}
+function newDebt(){
+let name=document.getElementById("debtName").value.trim();
+let n=Number(document.getElementById("debtAmount").value);
+if(!name||!Number.isFinite(n)||n<=0)return alert("Ad ve tutar gir.");
+db.debts.push({id:Date.now()+Math.random(),name,remaining:n,initial:n,payments:[]});
+document.getElementById("debtName").value="";
+document.getElementById("debtAmount").value="";save();
+}
+function changeDebt(id,sign){
+let d=db.debts.find(x=>x.id===id),el=document.getElementById("pay"+id),n=Number(el.value);
+if(!d||!Number.isFinite(n)||n<=0)return alert("Tutar gir.");
+if(sign<0&&n>d.remaining)return alert("Ödeme borçtan büyük olamaz.");
+d.remaining=Math.round((d.remaining+sign*n)*100)/100;
+d.payments.push({amount:sign*n,date:new Date().toISOString()});
+save();
+}
+function removeTransaction(id){
+if(confirm("Bu işlemi silmek istiyor musun?")){
+db.transactions=db.transactions.filter(x=>x.id!==id);save();
+}
+}
+function render(){
+const names={income:"Dükkan Gelir",shop:"Dükkan Gider",personal:"Şahsi Gider"};
+document.getElementById("history").innerHTML=db.transactions.slice(0,10).map(x=>`<div class="item line"><div style="flex:1">${names[x.type]}<div class="small">${new Date(x.date).toLocaleString("tr-TR")}</div></div><b>${money(x.amount)}</b><button onclick="removeTransaction(${x.id})">Sil</button></div>`).join("")||'<p class="small">Henüz işlem yok.</p>';
+document.getElementById("debtList").innerHTML=db.debts.map(d=>`<div class="item"><b class="debt-name"></b><div class="amount">${money(d.remaining)}</div><div class="line"><input id="pay${d.id}" type="number" inputmode="decimal" placeholder="Tutar ₺"><button class="action green" onclick="changeDebt(${d.id},1)">+</button><button class="action red" onclick="changeDebt(${d.id},-1)">−</button></div></div>`).join("")||'<p class="small">Henüz borç yok.</p>';
+document.querySelectorAll(".debt-name").forEach((el,i)=>el.textContent=db.debts[i].name);
+const sum=t=>db.transactions.filter(x=>x.type===t).reduce((a,x)=>a+x.amount,0);
+let i=sum("income"),s=sum("shop"),p=sum("personal"),d=db.debts.reduce((a,x)=>a+x.remaining,0);
+document.getElementById("rIncome").textContent=money(i);
+document.getElementById("rShop").textContent=money(s);
+document.getElementById("rPersonal").textContent=money(p);
+document.getElementById("rDebt").textContent=money(d);
+document.getElementById("rBalance").textContent=money(i-s-p);
+}
+function backup(){
+const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
+const url=URL.createObjectURL(blob),a=document.createElement("a");
+a.href=url;a.download="VIZIR_Muhasebe_Yedek.json";a.click();
+setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+render();
+</script>
+</body>
+</html>
