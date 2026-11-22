@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="VIZIR Muhasebe">
 <meta name="theme-color" content="#142743">
-<title>VIZIR Muhasebe V5.1</title>
+<title>VIZIR Muhasebe V5.2</title>
 <style>
 :root{--navy:#142743;--ink:#192b43;--sub:#667991;--bg:#f2f5f9;--line:#e1e8f0;--green:#07875e;--red:#c54050}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
@@ -40,7 +40,7 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 </style>
 </head>
 <body>
-<header><div class="head"><div><b>VIZIR MUHASEBE</b><small>Mini satış · Ciro · Kâr · Borç</small></div><span class="version">V5.1</span></div></header>
+<header><div class="head"><div><b>VIZIR MUHASEBE</b><small>Mini satış · Ciro · Kâr · Borç</small></div><span class="version">V5.2</span></div></header>
 <nav>
 <button class="active" data-tab="quick">Hızlı Satış</button>
 <button data-tab="finance">Muhasebe</button>
@@ -94,10 +94,10 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 <div class="card" id="editPanel" hidden><h2 id="editTitle">İşlemi Düzenle</h2><div id="editBody"></div></div>
 </section>
 <section id="settings" hidden>
-<div class="card"><h2>Ürün Yönetimi</h2><p class="sub">Ürünün satış fiyatını ve kâr hesaplama yöntemini tanımla. Geçmiş satışların fiyatı ve kârı değişmez.</p><div class="stack">
+<div class="card"><h2>Ürün Yönetimi</h2><p class="sub">Ürün için maliyet, yüzde kâr veya adet başına sabit kâr belirle. Sabit kârda satış fiyatı değişse bile ürün kârı sabit kalır. Geçmiş satışlar değişmez.</p><div class="stack">
 <div><label>Ürün adı</label><input id="pName" maxlength="90" placeholder="Örneğin: Ice Latte"></div>
 <div><label>Kategori</label><select id="pCategory"></select></div>
-<div class="grid2"><div><label>Normal satış fiyatı (₺)</label><input id="pPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0"></div><div><label>Kâr hesaplama şekli</label><select id="pMethod"><option value="cost">Maliyetten hesapla</option><option value="percent">Satışın yüzdesi</option></select></div></div>
+<div class="grid2"><div><label>Normal satış fiyatı (₺)</label><input id="pPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0"></div><div><label>Kâr hesaplama şekli</label><select id="pMethod"><option value="cost">Maliyetten hesapla</option><option value="percent">Satışın yüzdesi</option><option value="fixed">Sabit kâr (₺ / adet)</option></select></div></div>
 <div><label id="pValueLabel">Ürün maliyeti (₺)</label><input id="pValue" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0"></div>
 <div class="note" id="pPreview">Kâr önizlemesi</div><div class="row"><button class="btn good grow" id="productSave">Ürünü Kaydet</button><button class="btn soft" id="productClear">Temizle</button></div>
 </div></div>
@@ -156,7 +156,7 @@ function cats(){return current().categories}
 function products(){return current().products}
 function product(x){return products().find(p=>String(p.id)===String(x))}
 function catName(x){return cats().find(c=>c.id===x)?.name||"Diğer"}
-function unitProfit(line){const pr=Number(line.price||0),v=Number(line.value||0);return line.method==="percent"?round(pr*v/100):round(pr-v)}
+function unitProfit(line){const pr=Number(line.price||0),v=Number(line.value||0);return line.method==="fixed"?round(v):line.method==="percent"?round(pr*v/100):round(pr-v)}
 function receiptStats(r){return (r.items||[]).reduce((a,x)=>{a.revenue+=round(Number(x.price)*Number(x.qty));a.profit+=round(unitProfit(x)*Number(x.qty));a.qty+=Number(x.qty);return a},{revenue:0,profit:0,qty:0})}
 function v5Sales(range){return current().receipts.filter(r=>!r.deleted&&entryDay(r)>=range.start&&entryDay(r)<=range.end)}
 function v4Sales(range){return old().sales.filter(x=>!x.voided&&entryDay(x)>=range.start&&entryDay(x)<=range.end)}
@@ -247,7 +247,7 @@ function syncSaleDraft(){if(!editing||editing.type!=="sale")return;const d=editi
 function renderEditPanel(){if(!editing){$("editPanel").hidden=true;return}$("editPanel").hidden=false;let html="";const d=editing.draft;
  if(editing.type==="sale"){
  html=`<div class="grid2"><div><label>Satış tarihi</label><input type="date" id="editDate" value="${esc(d.day)}"></div><div><label>Ödeme yöntemi</label><select id="editPayment"><option value="cash" ${d.payment==="cash"?"selected":""}>Nakit</option><option value="card" ${d.payment==="card"?"selected":""}>Kart</option></select></div></div><h3>Ürünler · Adet ve birim fiyat</h3><div id="editLines">`+
- d.items.map((x,i)=>`<div class="line-edit" data-line="${i}"><span class="sub"><b>${esc(x.name)}</b><br>${x.method==="cost"?"Maliyet: "+money(x.value):"Kâr: %"+x.value}</span><input type="number" min="1" step="1" inputmode="numeric" class="lineQty" value="${x.qty}" aria-label="Adet"><input type="number" min="0" step="0.01" inputmode="decimal" class="linePrice" value="${x.price}" aria-label="Birim fiyat"><button class="btn soft small" data-remove-line="${i}">✕</button></div>`).join("")+
+ d.items.map((x,i)=>`<div class="line-edit" data-line="${i}"><span class="sub"><b>${esc(x.name)}</b><br>${x.method==="cost"?"Maliyet: "+money(x.value):x.method==="fixed"?"Sabit kâr: "+money(x.value)+"/adet":"Kâr: %"+x.value}</span><input type="number" min="1" step="1" inputmode="numeric" class="lineQty" value="${x.qty}" aria-label="Adet"><input type="number" min="0" step="0.01" inputmode="decimal" class="linePrice" value="${x.price}" aria-label="Birim fiyat"><button class="btn soft small" data-remove-line="${i}">✕</button></div>`).join("")+
  `</div><div class="row" style="margin-top:9px"><select id="editAddProduct"><option value="">Ürün ekle...</option>${products().filter(p=>p.active).map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("")}</select><button class="btn soft" id="editAddLine">Ekle</button></div>`;
  }else if(editing.type==="old")html=`<p class="sub">Eski V4 kategorili satış. Kâr, o kaydın eski kâr kuralına göre tekrar hesaplanır.</p><div class="grid2"><div><label>Satış tutarı ₺</label><input type="number" id="editOldAmount" min="0" value="${d.amount}"></div><div><label>Adet</label><input type="number" id="editOldQty" min="1" step="1" value="${d.qty}"></div></div>`;
  else html=`<div class="stack"><div><label>Harcama tarihi</label><input id="editExpDay" type="date" value="${esc(d.day)}"></div><div><label>Açıklama</label><input id="editExpName" value="${esc(d.name)}"></div><div><label>Gider tutarı</label><input id="editExpAmount" type="number" min="0" value="${d.amount}"></div></div>`;
@@ -276,12 +276,12 @@ function renderSettings(){const selected=prodEditing?product(prodEditing):null;
  $("pCategory").innerHTML=cats().map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join("");
  if(selected&&$("pName").dataset.forId!==String(selected.id))fillProduct(selected);
  if(!selected&&!$("pName").dataset.forId)$("pCategory").value=chosenCat;
- $("allProducts").innerHTML=cats().map(c=>{const ps=products().filter(p=>p.category===c.id&&!p.deleted);if(!ps.length)return "";return `<h3>${esc(c.name)}</h3>`+ps.map(p=>`<div class="entry row"><div class="grow"><b>${esc(p.name)}</b><div class="sub">${money(p.price)} · ${p.method==="cost"?"Maliyet "+money(p.value):"Kâr %"+p.value} ${p.active?"":"· Gizli / Silinmiş"}</div></div><button class="btn soft small" data-product-delete="${esc(p.id)}">Sil</button><button class="btn soft small" data-product-edit="${esc(p.id)}">Düzenle</button><button class="btn soft small" data-product-toggle="${esc(p.id)}">${p.active?"Gizle":"Göster"}</button></div>`).join("")}).join("")||'<div class="empty">Ürün bulunmuyor.</div>';
+ $("allProducts").innerHTML=cats().map(c=>{const ps=products().filter(p=>p.category===c.id&&!p.deleted);if(!ps.length)return "";return `<h3>${esc(c.name)}</h3>`+ps.map(p=>`<div class="entry row"><div class="grow"><b>${esc(p.name)}</b><div class="sub">${money(p.price)} · ${p.method==="cost"?"Maliyet "+money(p.value):p.method==="fixed"?"Sabit kâr "+money(p.value)+"/adet":"Kâr %"+p.value} ${p.active?"":"· Gizli / Silinmiş"}</div></div><button class="btn soft small" data-product-delete="${esc(p.id)}">Sil</button><button class="btn soft small" data-product-edit="${esc(p.id)}">Düzenle</button><button class="btn soft small" data-product-toggle="${esc(p.id)}">${p.active?"Gizle":"Göster"}</button></div>`).join("")}).join("")||'<div class="empty">Ürün bulunmuyor.</div>';
  updateProductPreview();renderArchive()}
 function fillProduct(p){prodEditing=p.id;$("pName").dataset.forId=String(p.id);$("pName").value=p.name;$("pCategory").value=p.category;$("pPrice").value=p.price;$("pMethod").value=p.method;$("pValue").value=p.value;updateProductPreview()}
 function clearProduct(){prodEditing=null;delete $("pName").dataset.forId;$("pName").value="";$("pPrice").value="";$("pMethod").value="cost";$("pValue").value="";updateProductPreview()}
-function updateProductPreview(){const method=$("pMethod").value,price=num($("pPrice").value),value=num($("pValue").value);$("pValueLabel").textContent=method==="cost"?"Ürün maliyeti (₺)":"Satıştan kâr yüzdesi (%)";$("pPreview").textContent=Number.isFinite(price)&&Number.isFinite(value)&&price>=0&&value>=0?"Normal satışta kâr: "+money(unitProfit({method,price,value})):"Fiyat ve kâr bilgisini gir."}
-function saveProduct(){const name=$("pName").value.trim(),category=$("pCategory").value,price=num($("pPrice").value),method=$("pMethod").value,value=num($("pValue").value);if(!name||!cats().some(c=>c.id===category)||$("pPrice").value.trim()===""||$("pValue").value.trim()===""||!Number.isFinite(price)||price<0||!Number.isFinite(value)||value<0||(method==="percent"&&value>100))return alert("Ürün, fiyat ve maliyet/yüzde alanlarını kontrol et.");
+function updateProductPreview(){const method=$("pMethod").value,price=num($("pPrice").value),value=num($("pValue").value);$("pValueLabel").textContent=method==="cost"?"Ürün maliyeti (₺)":method==="fixed"?"Sabit kâr (₺ / adet)":"Satıştan kâr yüzdesi (%)";$("pPreview").textContent=Number.isFinite(price)&&Number.isFinite(value)&&price>=0&&value>=0?"Normal satışta kâr: "+money(unitProfit({method,price,value})):"Fiyat ve kâr bilgisini gir."}
+function saveProduct(){const name=$("pName").value.trim(),category=$("pCategory").value,price=num($("pPrice").value),method=$("pMethod").value,value=num($("pValue").value);if(!name||!cats().some(c=>c.id===category)||$("pPrice").value.trim()===""||$("pValue").value.trim()===""||!Number.isFinite(price)||price<0||!Number.isFinite(value)||value<0||(method==="percent"&&value>100))return alert("Ürün adı, satış fiyatı ve kâr hesaplama alanlarını kontrol et.");
  if(save(()=>{if(prodEditing){const p=product(prodEditing);if(p)Object.assign(p,{name,category,price:round(price),method,value:round(value)})}else products().push({id:id(),name,category,price:round(price),method,value:round(value),active:true})})){clearProduct();renderShop()}}
 function deleteProduct(prodId){const p=product(prodId);if(!p||p.deleted)return;if(!confirm(`${p.name} satış ekranından silinsin mi? Eski satışlar korunacak.`))return;save(()=>{p.active=false;p.deleted=true;});if(String(prodEditing)===String(prodId))clearProduct();if(String(chosenId)===String(prodId))chosenId=null;renderShop()}
 function addCategory(){const name=$("categoryName").value.trim();if(!name)return alert("Kategori adını yaz.");if(cats().some(c=>c.name.toLocaleLowerCase("tr-TR")===name.toLocaleLowerCase("tr-TR")))return alert("Bu kategori zaten var.");if(save(()=>cats().push({id:"cat-"+id(),name}))){$("categoryName").value=""}}
