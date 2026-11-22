@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="VIZIR Muhasebe">
 <meta name="theme-color" content="#142743">
-<title>VIZIR Muhasebe V5</title>
+<title>VIZIR Muhasebe V5.1</title>
 <style>
 :root{--navy:#142743;--ink:#192b43;--sub:#667991;--bg:#f2f5f9;--line:#e1e8f0;--green:#07875e;--red:#c54050}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
@@ -40,7 +40,7 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 </style>
 </head>
 <body>
-<header><div class="head"><div><b>VIZIR MUHASEBE</b><small>Mini satış · Ciro · Kâr · Borç</small></div><span class="version">V5</span></div></header>
+<header><div class="head"><div><b>VIZIR MUHASEBE</b><small>Mini satış · Ciro · Kâr · Borç</small></div><span class="version">V5.1</span></div></header>
 <nav>
 <button class="active" data-tab="quick">Hızlı Satış</button>
 <button data-tab="finance">Muhasebe</button>
@@ -51,7 +51,7 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 <section id="quick">
 <div class="grid2 stats">
  <div class="card" style="background:#e7f6ee"><div class="sub">BUGÜNKÜ CİRO</div><div class="kpi green" id="todaySales">0 ₺</div></div>
- <div class="card"><div class="sub">BUGÜNKÜ ÜRÜN KÂRI</div><div class="kpi" id="todayProfit">0 ₺</div></div>
+ <div class="card"><div class="sub">BUGÜNKÜ KÂR (BANKA SONRASI)</div><div class="kpi" id="todayProfit">0 ₺</div></div>
 </div>
 <div class="card"><h2>1 · Kategori Seç</h2><div class="grid3" id="categoriesQuick"></div></div>
 <div class="card"><div class="row between"><h2 id="productTitle">2 · Ürün Seç</h2><span class="tiny">Tek dokunuşla seç</span></div><div class="grid3" id="productsQuick"></div><div id="selection" class="picked" hidden>
@@ -61,7 +61,7 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 <button class="btn good" id="addCart" style="width:100%">Sepete Ekle</button>
 </div></div>
 <div class="card"><div class="row between"><h2>3 · Satış Sepeti</h2><span id="cartCount" class="tag">0 ürün</span></div><div id="cartRows" class="empty">Henüz ürün seçilmedi.</div>
-<div class="line"></div><div class="row between"><b>TOPLAM</b><div class="kpi" id="cartTotal">0 ₺</div></div><div class="row between" style="margin:6px 0 11px"><span class="sub">Ürünlerden kâr</span><b id="cartProfit">0 ₺</b></div>
+<div class="line"></div><div class="row between"><b>TOPLAM</b><div class="kpi" id="cartTotal">0 ₺</div></div><div class="row between" style="margin:6px 0 11px"><span class="sub">Kâr (kart kesintisi sonrası)</span><b id="cartProfit">0 ₺</b></div>
 <label>4 · Ödeme Yöntemi</label><div class="grid2" style="margin:6px 0 12px"><button class="pay active" data-payment="cash">💵 Nakit</button><button class="pay" data-payment="card">💳 Kart</button></div>
 <button class="btn good" id="completeSale" style="width:100%">✓ Satışı Tamamla</button>
 </div>
@@ -72,13 +72,16 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 <div class="grid2" id="customRange" hidden><div><label>Başlangıç</label><input type="date" id="rangeStart"></div><div><label>Bitiş</label><input type="date" id="rangeEnd"></div></div></div>
 <div class="grid2 stats">
 <div class="card"><div class="sub">TOPLAM CİRO</div><div class="kpi green" id="rSales">0 ₺</div></div>
-<div class="card"><div class="sub">ÜRÜNLERDEN KÂR</div><div class="kpi" id="rGross">0 ₺</div></div>
-<div class="card"><div class="sub">SABİT GİDER PAYI</div><div class="kpi" id="rFixed">0 ₺</div></div>
+<div class="card"><div class="sub">ÜRÜNLERDEN KÂR (KESİNTİ ÖNCESİ)</div><div class="kpi" id="rGross">0 ₺</div></div>
+<div class="card"><div class="sub">SABİT GİDER PAYI</div><div class="kpi" id="rFixed">0 ₺</div><div class="sub" style="margin-top:6px">Günlük sabit gideri karşılayan tahmini ciro</div><b id="rTarget">—</b><div class="tiny">Seçili dönemin banka kesintisi sonrası ürün kâr marjına göre</div></div>
+<div class="card"><div class="sub">KART KOMİSYONU (%3)</div><div class="kpi redtext" id="rFee">0 ₺</div></div>
 <div class="card"><div class="sub">EKSTRA GİDER</div><div class="kpi" id="rExtra">0 ₺</div></div>
 <div class="card"><div class="sub">TAHMİNİ NET KÂR</div><div class="kpi" id="rNet">0 ₺</div></div>
 <div class="card"><div class="sub">SATIŞ OLAN GÜN ORT. CİRO</div><div class="kpi" id="rAverage">0 ₺</div></div>
 </div>
-<div class="card"><h2>Ödeme Türüne Göre Ciro</h2><div class="grid3"><div><div class="sub">💵 Nakit</div><b id="rCash">0 ₺</b></div><div><div class="sub">💳 Kart</div><b id="rCard">0 ₺</b></div><div><div class="sub">Eski / Belirsiz</div><b id="rUnknown">0 ₺</b></div></div><p class="sub">V4'ten aktarılan eski satışlarda ödeme yöntemi bilinmediği için ayrı gösterilir.</p></div>
+<div class="card"><div class="note">Kartla alınan V5 satışlarında brüt ürün kârından satış tutarının %3’ü banka komisyonu düşülür. Eski ödeme türü belirsiz kayıtlarda komisyon tahmin edilmez.</div></div>
+<div class="card"><h2>Ödeme Türüne Göre Ciro</h2><div class="grid3"><div><div class="sub">💵 Nakit</div><b id="rCash">0 ₺</b></div><div><div class="sub">💳 Kart</div><b id="rCard">0 ₺</b></div><div><div class="sub">Eski / Belirsiz</div><b id="rUnknown">0 ₺</b></div></div><p class="sub">V3 ve V4 eski satışlarda ödeme yöntemi bilinmediği için ayrı gösterilir.</p></div>
+<div class="card"><div class="sub">V3 ESKİ CİRO (%20 TAHMİNİ KÂR)</div><div class="kpi" id="rOldRevenue">0 ₺</div></div>
 <div class="card"><h2>Ürün Bazında Satış Raporu</h2><div class="reportRow headrow"><span>Ürün</span><span class="right">Adet</span><span class="right">Ciro</span><span class="right">Kâr</span></div><div id="productReport"></div><div id="legacyReport"></div></div>
 <div class="card"><h2>Aylık Sabit Giderler</h2><p class="sub">Kira, maaş, elektrik gibi aylık giderleri ekle. Seçili dönemde her gün ayın gün sayısına göre paylaştırılır.</p><input id="fixedName" placeholder="Gider adı (örn. kira)" maxlength="90"><div class="row" style="margin-top:8px"><input id="fixedAmount" type="number" inputmode="decimal" min="0" placeholder="Aylık tutar ₺"><button class="btn good" id="fixedAdd">Ekle</button></div><div id="fixedRows" style="margin-top:10px"></div></div>
 <div class="card"><h2>Günlük Ekstra Gider</h2><div class="stack"><input id="expenseDay" type="date"><input id="expenseName" placeholder="Harcama açıklaması" maxlength="90"><div class="row"><input id="expenseAmount" type="number" min="0" inputmode="decimal" placeholder="Tutar ₺"><button class="btn good" id="expenseAdd">Ekle</button></div></div><div id="extraSummary" class="sub" style="margin-top:10px"></div><p class="sub">Ürün kârında zaten hesaba katılan malzeme maliyetini ikinci kez gider yazma.</p></div>
@@ -98,10 +101,10 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 <div><label id="pValueLabel">Ürün maliyeti (₺)</label><input id="pValue" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0"></div>
 <div class="note" id="pPreview">Kâr önizlemesi</div><div class="row"><button class="btn good grow" id="productSave">Ürünü Kaydet</button><button class="btn soft" id="productClear">Temizle</button></div>
 </div></div>
-<div class="card"><h2>Ürünlerim</h2><div id="allProducts"></div></div>
+<div class="card"><h2>Ürünlerim</h2><p class="sub">Silinen ürünler satış ekranından kaldırılır; eski satış kayıtları ve raporlar korunur.</p><div id="allProducts"></div></div>
 <div class="card"><h2>Yeni Kategori Ekle</h2><div class="row"><input id="categoryName" placeholder="Kategori adı" maxlength="36"><button class="btn good" id="categoryAdd">Ekle</button></div></div>
 <div class="card"><h2>Yedekleme ve Verileri Koruma</h2><button class="btn good" id="downloadBackup" style="width:100%">Tüm Verileri JSON Yedekle</button><label style="margin-top:12px">Yedekten geri yükle</label><input id="restoreFile" type="file" accept=".json,application/json"><p class="note">Yedek almadan uygulamayı silme veya Safari verilerini temizleme. Geri yükleme mevcut kayıtların yerine geçer.</p></div>
-<details class="card"><summary><b>V3 Eski Kayıtlar (Arşiv)</b></summary><p class="sub">Eski gelir, dükkan gideri, şahsi gider kayıtları silinmez; yeni ciro/kâr hesabına ikinci kez eklenmez.</p><div id="legacyArchive"></div></details>
+<details class="card"><summary><b>V3 Eski Kayıtlar (Arşiv)</b></summary><p class="sub">Eski V3 gelir kayıtları ciroya bir kez %20 tahmini kârla dahil edilir. Eski V3 gider ve şahsi gider kayıtları yalnızca arşivde saklanır.</p><div id="legacyArchive"></div></details>
 </section>
 </main>
 <script>
@@ -157,6 +160,7 @@ function unitProfit(line){const pr=Number(line.price||0),v=Number(line.value||0)
 function receiptStats(r){return (r.items||[]).reduce((a,x)=>{a.revenue+=round(Number(x.price)*Number(x.qty));a.profit+=round(unitProfit(x)*Number(x.qty));a.qty+=Number(x.qty);return a},{revenue:0,profit:0,qty:0})}
 function v5Sales(range){return current().receipts.filter(r=>!r.deleted&&entryDay(r)>=range.start&&entryDay(r)<=range.end)}
 function v4Sales(range){return old().sales.filter(x=>!x.voided&&entryDay(x)>=range.start&&entryDay(x)<=range.end)}
+function oldIncome(range){return db.transactions.filter(x=>x.type==="income"&&Number(x.amount)>0&&entryDay(x)>=range.start&&entryDay(x)<=range.end)}
 function extras(range){return old().extras.filter(x=>!x.voided&&entryDay(x)>=range.start&&entryDay(x)<=range.end)}
 function monthFixed(m){return sum(old().fixed.filter(x=>x.startMonth<=m&&(!x.endMonth||x.endMonth>=m)),"amount")}
 function fixedForRange(range){
@@ -177,11 +181,12 @@ function period(){const type=$("reportPeriod").value,anchor=$("reportAnchor").va
  if(type==="month"){start=monthOf(anchor)+"-01";end=monthOf(anchor)+"-"+String(monthDays(monthOf(anchor))).padStart(2,"0")}
  if(type==="custom"){start=$("rangeStart").value||anchor;end=$("rangeEnd").value||anchor}
  if(start>end)[start,end]=[end,start];return {start,end}}
-function rangeStats(range){const receipts=v5Sales(range),legacy=v4Sales(range),additional=extras(range);let revenue=0,profit=0,cash=0,card=0,unknown=0,qty=0;const soldDays=new Set();
- for(const r of receipts){const s=receiptStats(r);revenue+=s.revenue;profit+=s.profit;qty+=s.qty;soldDays.add(entryDay(r));if(r.payment==="cash")cash+=s.revenue;else if(r.payment==="card")card+=s.revenue;else unknown+=s.revenue}
+function rangeStats(range){const receipts=v5Sales(range),legacy=v4Sales(range),archived=oldIncome(range),additional=extras(range);let revenue=0,profit=0,cash=0,card=0,unknown=0,qty=0,fee=0,oldRevenue=0;const soldDays=new Set();
+ for(const r of receipts){const s=receiptStats(r);revenue+=s.revenue;profit+=s.profit;qty+=s.qty;soldDays.add(entryDay(r));if(r.payment==="cash")cash+=s.revenue;else if(r.payment==="card"){card+=s.revenue;fee+=round(s.revenue*.03)}else unknown+=s.revenue}
  for(const x of legacy){revenue+=Number(x.amount||0);profit+=Number(x.profit||0);qty+=Number(x.qty||1);unknown+=Number(x.amount||0);soldDays.add(entryDay(x))}
+ for(const x of archived){const a=Number(x.amount);revenue+=a;oldRevenue+=a;profit+=round(a*.20);unknown+=a;soldDays.add(entryDay(x))}
  const extra=sum(additional,"amount"),fixed=fixedForRange(range);
- return {revenue:round(revenue),profit:round(profit),cash:round(cash),card:round(card),unknown:round(unknown),qty,extra:round(extra),fixed,net:round(profit-fixed-extra),days:soldDays.size}}
+ return {revenue:round(revenue),profit:round(profit),fee:round(fee),oldRevenue:round(oldRevenue),cash:round(cash),card:round(card),unknown:round(unknown),qty,extra:round(extra),fixed,net:round(profit-fee-fixed-extra),days:soldDays.size}}
 function chooseCategory(cat){chosenCat=cat;chosenId=null;renderShop()}
 function chooseProduct(prodId){const p=product(prodId);if(!p||!p.active)return;chosenId=p.id;sellQty=1;renderShop()}
 function updatePricePreview(){const p=product(chosenId);if(!p)return;const n=num($("sellPrice").value);$("sellProfit").textContent=Number.isFinite(n)&&n>=0?money(unitProfit({price:n,method:p.method,value:p.value})*sellQty):"—"}
@@ -190,7 +195,7 @@ function addToCart(){const p=product(chosenId),price=num($("sellPrice").value);i
  cart.push({productId:p.id,name:p.name,category:p.category,price:round(price),qty:sellQty,method:p.method,value:p.value});chosenId=null;renderShop()}
 function completeSale(){if(!cart.length)return alert("Önce sepete ürün ekle.");if(!confirm(`${money(cart.reduce((s,x)=>s+x.price*x.qty,0))} tutarında ${payment==="cash"?"NAKİT":"KART"} satış kaydedilsin mi?`))return;
  if(save(()=>current().receipts.unshift({id:id(),day:dayKey(),date:new Date().toISOString(),payment,items:JSON.parse(JSON.stringify(cart)),deleted:false,audit:[]}))){cart=[];renderShop();alert("Satış kaydedildi.")}}
-function renderShop(){const today=rangeStats({start:dayKey(),end:dayKey()});setMoney("todaySales",today.revenue);setMoney("todayProfit",today.profit);const c=cats();$("categoriesQuick").innerHTML=c.map(x=>`<button class="category ${chosenCat===x.id?"active":""}" data-cat="${esc(x.id)}">${esc(x.name)}</button>`).join("");
+function renderShop(){const today=rangeStats({start:dayKey(),end:dayKey()});setMoney("todaySales",today.revenue);setMoney("todayProfit",today.profit-today.fee);const c=cats();$("categoriesQuick").innerHTML=c.map(x=>`<button class="category ${chosenCat===x.id?"active":""}" data-cat="${esc(x.id)}">${esc(x.name)}</button>`).join("");
  const list=products().filter(p=>p.active&&p.category===chosenCat);$("productTitle").textContent="2 · "+catName(chosenCat)+" Ürünleri";
  $("productsQuick").innerHTML=list.map(p=>`<button class="product" data-product="${esc(p.id)}"><b>${esc(p.name)}</b><span>${money(p.price)}</span></button>`).join("")||'<div class="empty" style="grid-column:1/-1">Bu kategoride ürün yok. Ayarlar’dan ekleyebilirsin.</div>';
  const p=product(chosenId);$("selection").hidden=!p;
@@ -198,14 +203,18 @@ function renderShop(){const today=rangeStats({start:dayKey(),end:dayKey()});setM
  $("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0)+" ürün";
  $("cartRows").className=cart.length?"":"empty";
  $("cartRows").innerHTML=cart.map((x,i)=>`<div class="entry row"><div class="grow"><b>${esc(x.name)} × ${x.qty}</b><div class="sub">Birim ${money(x.price)} · Kâr ${money(unitProfit(x)*x.qty)}</div></div><b class="price">${money(x.price*x.qty)}</b><button class="btn soft small" data-cart-remove="${i}" aria-label="Sepetten çıkar">✕</button></div>`).join("")||"Henüz ürün seçilmedi.";
- setMoney("cartTotal",cart.reduce((s,x)=>s+x.price*x.qty,0));setMoney("cartProfit",cart.reduce((s,x)=>s+unitProfit(x)*x.qty,0));
+ setMoney("cartTotal",cart.reduce((s,x)=>s+x.price*x.qty,0));setMoney("cartProfit",cart.reduce((s,x)=>s+unitProfit(x)*x.qty,0)-(payment==="card"?round(cart.reduce((s,x)=>s+x.price*x.qty,0)*.03):0));
  document.querySelectorAll(".pay").forEach(b=>b.classList.toggle("active",b.dataset.payment===payment))}
 function renderFinance(){const range=period(),s=rangeStats(range);$("customRange").hidden=$("reportPeriod").value!=="custom";
  $("rangeLabel").textContent=showDay(range.start)+(range.start!==range.end?" — "+showDay(range.end):"");
- for(const [k,v] of [["rSales",s.revenue],["rGross",s.profit],["rFixed",s.fixed],["rExtra",s.extra],["rAverage",s.days?s.revenue/s.days:0],["rCash",s.cash],["rCard",s.card],["rUnknown",s.unknown]])setMoney(k,v);setNet("rNet",s.net);
- const grouped=new Map();for(const r of v5Sales(range))for(const x of r.items){const key=String(x.productId||x.name),g=grouped.get(key)||{name:x.name,qty:0,revenue:0,profit:0};g.qty+=Number(x.qty);g.revenue+=x.qty*x.price;g.profit+=x.qty*unitProfit(x);grouped.set(key,g)}
+ for(const [k,v] of [["rSales",s.revenue],["rGross",s.profit],["rFixed",s.fixed],["rExtra",s.extra],["rFee",s.fee],["rOldRevenue",s.oldRevenue],["rAverage",s.days?s.revenue/s.days:0],["rCash",s.cash],["rCard",s.card],["rUnknown",s.unknown]])setMoney(k,v);setNet("rNet",s.net);
+ const fixedPerDay=monthFixed(monthOf(range.end))/monthDays(monthOf(range.end));
+ const usableMargin=s.revenue>0?(s.profit-s.fee)/s.revenue:0;
+ $("rTarget").textContent=fixedPerDay<=0?money(0):usableMargin>0?money(fixedPerDay/usableMargin):"Kâr marjı verisi gerekli";
+ const grouped=new Map();for(const r of v5Sales(range))for(const x of r.items){const key=String(x.productId||x.name),g=grouped.get(key)||{name:x.name,qty:0,revenue:0,profit:0};g.qty+=Number(x.qty);g.revenue+=x.qty*x.price;g.profit+=x.qty*unitProfit(x)-(r.payment==="card"?round(x.qty*x.price*.03):0);grouped.set(key,g)}
  $("productReport").innerHTML=[...grouped.values()].sort((a,b)=>b.qty-a.qty).map(x=>`<div class="reportRow"><b>${esc(x.name)}</b><span class="right">${x.qty}</span><span class="right">${money(x.revenue)}</span><span class="right green">${money(x.profit)}</span></div>`).join("")||'<div class="empty">Bu dönemde V5 ürün satışı yok.</div>';
  const legacy=v4Sales(range);$("legacyReport").innerHTML=legacy.length?`<div class="note" style="margin-top:10px"><b>V4'ten gelen kategori satışları</b><br>Ürün adı ayrı ayrı kaydedilmediği için ürün raporuna dağıtılmadı; toplam ciroya ve kâra dahildir: ${money(sum(legacy,"amount"))} ciro, ${money(sum(legacy,"profit"))} kâr.</div>`:"";
+ if(s.oldRevenue)$("legacyReport").innerHTML+=`<div class="note" style="margin-top:8px"><b>V3 eski ciro</b><br>${money(s.oldRevenue)} ciro, ${money(round(s.oldRevenue*.20))} tahmini kâr (%20). Bu tutar mevcut V3 işlemlerinden okunur, yeni işlem olarak eklenmez.</div>`;
  const thisMonth=monthOf(dayKey());$("fixedRows").innerHTML=old().fixed.filter(x=>x.startMonth<=thisMonth&&(!x.endMonth||x.endMonth>=thisMonth)).map(x=>`<div class="entry"><div class="row"><div class="grow"><b>${esc(x.name)}</b><div class="sub">${money(x.amount)}/ay ${x.endMonth?"· Ay sonunda duracak":""}</div></div><button class="btn soft small" data-fix-edit="${esc(x.id)}">Düzenle</button><button class="btn soft small" data-fix-stop="${esc(x.id)}" ${x.endMonth?"disabled":""}>Durdur</button></div></div>`).join("")||'<div class="empty">Sabit gider eklenmemiş.</div>';
  $("extraSummary").textContent="Seçilen gider günü: "+showDay($("expenseDay").value)+" · "+money(sum(extras({start:$("expenseDay").value,end:$("expenseDay").value}),"amount"));
  setMoney("totalDebt",sum(db.debts,"remaining"));renderDebts()}
@@ -221,11 +230,11 @@ function addFixed(){const name=$("fixedName").value.trim(),amount=num($("fixedAm
 function editFixed(fixedId){const x=old().fixed.find(y=>String(y.id)===String(fixedId)),month=monthOf(dayKey());if(!x)return;const answer=prompt(x.name+" yeni aylık tutarı (₺)",String(x.amount));if(answer===null)return;const amount=num(answer);if(!valid(amount))return alert("Geçerli tutar gir.");if(!confirm("Yeni tutar bu aydan itibaren geçerli olsun mu?"))return;save(()=>{x.endMonth=monthAdd(month,-1);old().fixed.push({id:id(),name:x.name,amount:round(amount),startMonth:month,endMonth:null})})}
 function stopFixed(fixedId){const x=old().fixed.find(y=>String(y.id)===String(fixedId));if(!x||x.endMonth)return;if(confirm("Bu sabit gider gelecek aydan itibaren durdurulsun mu?"))save(()=>x.endMonth=monthOf(dayKey()))}
 function addExpense(){const name=$("expenseName").value.trim(),amount=num($("expenseAmount").value),day=$("expenseDay").value;if(!name||!valid(amount)||!/^\d{4}-\d{2}-\d{2}$/.test(day))return alert("Gider adı, tutar ve tarih gir.");if(save(()=>old().extras.unshift({id:id(),name,amount:round(amount),expenseDay:day,date:new Date().toISOString(),voided:false}))){$("expenseName").value="";$("expenseAmount").value=""}}
-function renderTransactions(){const day=$("txDay").value||dayKey(),r={start:day,end:day},s=rangeStats(r);setMoney("txSales",s.revenue);setMoney("txProfit",s.profit);
+function renderTransactions(){const day=$("txDay").value||dayKey(),r={start:day,end:day},s=rangeStats(r);setMoney("txSales",s.revenue);setMoney("txProfit",s.profit-s.fee);
  const showDeleted=$("showDeleted").checked;
  const currentReceipts=current().receipts.filter(x=>entryDay(x)===day&&(showDeleted||!x.deleted)).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
  const legacy=old().sales.filter(x=>entryDay(x)===day&&(showDeleted||!x.voided));
- $("txSalesList").innerHTML=currentReceipts.map(r=>{const st=receiptStats(r);return `<div class="entry"><div class="row between"><b>${showDay(entryDay(r))} · ${r.payment==="cash"?"💵 Nakit":r.payment==="card"?"💳 Kart":"Ödeme belirsiz"}</b><span class="tag">${st.qty} adet</span></div><div class="sub" style="margin:5px 0">${(r.items||[]).map(x=>esc(x.name)+" × "+x.qty).join(", ")}</div><div class="row between"><b class="price">${money(st.revenue)}</b><span class="green">Kâr ${money(st.profit)}</span></div><div class="actions">${r.deleted?`<button class="btn soft small" data-restore-sale="${esc(r.id)}">Geri Yükle</button>`:`<button class="btn soft small" data-edit-sale="${esc(r.id)}">Düzenle</button><button class="btn soft small" data-delete-sale="${esc(r.id)}">Sil</button>`}</div></div>`}).join("")+
+ $("txSalesList").innerHTML=currentReceipts.map(r=>{const st=receiptStats(r);return `<div class="entry"><div class="row between"><b>${showDay(entryDay(r))} · ${r.payment==="cash"?"💵 Nakit":r.payment==="card"?"💳 Kart":"Ödeme belirsiz"}</b><span class="tag">${st.qty} adet</span></div><div class="sub" style="margin:5px 0">${(r.items||[]).map(x=>esc(x.name)+" × "+x.qty).join(", ")}</div><div class="row between"><b class="price">${money(st.revenue)}</b><span class="green">Kart kesintisi sonrası kâr ${money(st.profit-(r.payment==="card"?round(st.revenue*.03):0))}</span></div><div class="actions">${r.deleted?`<button class="btn soft small" data-restore-sale="${esc(r.id)}">Geri Yükle</button>`:`<button class="btn soft small" data-edit-sale="${esc(r.id)}">Düzenle</button><button class="btn soft small" data-delete-sale="${esc(r.id)}">Sil</button>`}</div></div>`}).join("")+
  legacy.map(x=>`<div class="entry"><div class="row between"><b>Eski V4: ${esc(x.categoryName||catName(x.category))}</b><span class="tag">Ödeme belirsiz</span></div><div class="sub">${Number(x.qty||1)} adet · Eski kategori kaydı</div><div class="row between"><b>${money(x.amount)}</b><span class="green">Kâr ${money(x.profit)}</span></div><div class="actions">${x.voided?`<button class="btn soft small" data-restore-old="${esc(x.id)}">Geri Yükle</button>`:`<button class="btn soft small" data-edit-old="${esc(x.id)}">Düzenle</button><button class="btn soft small" data-delete-old="${esc(x.id)}">Sil</button>`}</div></div>`).join("")||'<div class="empty">Bu tarihte satış kaydı yok.</div>';
  $("txExpenses").innerHTML=old().extras.filter(x=>entryDay(x)===day&&!x.voided).map(x=>`<div class="entry row"><div class="grow"><b>${esc(x.name)}</b><div class="sub">${money(x.amount)}</div></div><button class="btn soft small" data-edit-expense="${esc(x.id)}">Düzenle</button><button class="btn soft small" data-delete-expense="${esc(x.id)}">Sil</button></div>`).join("")||'<div class="empty">Bu gün ekstra gider yok.</div>';
  renderEditPanel()}
@@ -267,13 +276,14 @@ function renderSettings(){const selected=prodEditing?product(prodEditing):null;
  $("pCategory").innerHTML=cats().map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join("");
  if(selected&&$("pName").dataset.forId!==String(selected.id))fillProduct(selected);
  if(!selected&&!$("pName").dataset.forId)$("pCategory").value=chosenCat;
- $("allProducts").innerHTML=cats().map(c=>{const ps=products().filter(p=>p.category===c.id);if(!ps.length)return "";return `<h3>${esc(c.name)}</h3>`+ps.map(p=>`<div class="entry row"><div class="grow"><b>${esc(p.name)}</b><div class="sub">${money(p.price)} · ${p.method==="cost"?"Maliyet "+money(p.value):"Kâr %"+p.value} ${p.active?"":"· Gizli"}</div></div><button class="btn soft small" data-product-edit="${esc(p.id)}">Düzenle</button><button class="btn soft small" data-product-toggle="${esc(p.id)}">${p.active?"Gizle":"Göster"}</button></div>`).join("")}).join("")||'<div class="empty">Ürün bulunmuyor.</div>';
+ $("allProducts").innerHTML=cats().map(c=>{const ps=products().filter(p=>p.category===c.id&&!p.deleted);if(!ps.length)return "";return `<h3>${esc(c.name)}</h3>`+ps.map(p=>`<div class="entry row"><div class="grow"><b>${esc(p.name)}</b><div class="sub">${money(p.price)} · ${p.method==="cost"?"Maliyet "+money(p.value):"Kâr %"+p.value} ${p.active?"":"· Gizli / Silinmiş"}</div></div><button class="btn soft small" data-product-delete="${esc(p.id)}">Sil</button><button class="btn soft small" data-product-edit="${esc(p.id)}">Düzenle</button><button class="btn soft small" data-product-toggle="${esc(p.id)}">${p.active?"Gizle":"Göster"}</button></div>`).join("")}).join("")||'<div class="empty">Ürün bulunmuyor.</div>';
  updateProductPreview();renderArchive()}
 function fillProduct(p){prodEditing=p.id;$("pName").dataset.forId=String(p.id);$("pName").value=p.name;$("pCategory").value=p.category;$("pPrice").value=p.price;$("pMethod").value=p.method;$("pValue").value=p.value;updateProductPreview()}
 function clearProduct(){prodEditing=null;delete $("pName").dataset.forId;$("pName").value="";$("pPrice").value="";$("pMethod").value="cost";$("pValue").value="";updateProductPreview()}
 function updateProductPreview(){const method=$("pMethod").value,price=num($("pPrice").value),value=num($("pValue").value);$("pValueLabel").textContent=method==="cost"?"Ürün maliyeti (₺)":"Satıştan kâr yüzdesi (%)";$("pPreview").textContent=Number.isFinite(price)&&Number.isFinite(value)&&price>=0&&value>=0?"Normal satışta kâr: "+money(unitProfit({method,price,value})):"Fiyat ve kâr bilgisini gir."}
 function saveProduct(){const name=$("pName").value.trim(),category=$("pCategory").value,price=num($("pPrice").value),method=$("pMethod").value,value=num($("pValue").value);if(!name||!cats().some(c=>c.id===category)||$("pPrice").value.trim()===""||$("pValue").value.trim()===""||!Number.isFinite(price)||price<0||!Number.isFinite(value)||value<0||(method==="percent"&&value>100))return alert("Ürün, fiyat ve maliyet/yüzde alanlarını kontrol et.");
  if(save(()=>{if(prodEditing){const p=product(prodEditing);if(p)Object.assign(p,{name,category,price:round(price),method,value:round(value)})}else products().push({id:id(),name,category,price:round(price),method,value:round(value),active:true})})){clearProduct();renderShop()}}
+function deleteProduct(prodId){const p=product(prodId);if(!p||p.deleted)return;if(!confirm(`${p.name} satış ekranından silinsin mi? Eski satışlar korunacak.`))return;save(()=>{p.active=false;p.deleted=true;});if(String(prodEditing)===String(prodId))clearProduct();if(String(chosenId)===String(prodId))chosenId=null;renderShop()}
 function addCategory(){const name=$("categoryName").value.trim();if(!name)return alert("Kategori adını yaz.");if(cats().some(c=>c.name.toLocaleLowerCase("tr-TR")===name.toLocaleLowerCase("tr-TR")))return alert("Bu kategori zaten var.");if(save(()=>cats().push({id:"cat-"+id(),name}))){$("categoryName").value=""}}
 function renderArchive(){
  const arr=db.transactions||[],types={income:"Dükkan Geliri",shop:"Dükkan Gideri",personal:"Şahsi Gider"};
@@ -283,7 +293,7 @@ function renderArchive(){
 }
 function downloadBackup(){
  const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
- a.href=url;a.download="VIZIR_Muhasebe_V5_Yedek_"+dayKey()+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
+ a.href=url;a.download="VIZIR_Muhasebe_V5_1_Yedek_"+dayKey()+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
 }
 function restoreBackup(e){const file=e.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{
  try{const value=JSON.parse(reader.result);
@@ -355,6 +365,7 @@ $("productSave").addEventListener("click",saveProduct);
 $("productClear").addEventListener("click",clearProduct);
 $("allProducts").addEventListener("click",e=>{
  const edit=e.target.closest("[data-product-edit]");if(edit){const p=product(edit.dataset.productEdit);if(p){fillProduct(p);$("pName").scrollIntoView({behavior:"smooth",block:"center"})}return}
+ const del=e.target.closest("[data-product-delete]");if(del){deleteProduct(del.dataset.productDelete);return}
  const toggle=e.target.closest("[data-product-toggle]");if(toggle){const p=product(toggle.dataset.productToggle);if(p)save(()=>p.active=!p.active)}
 });
 $("categoryAdd").addEventListener("click",addCategory);
