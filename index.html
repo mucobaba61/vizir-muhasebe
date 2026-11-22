@@ -1,406 +1,1224 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="VIZIR Muhasebe">
-<meta name="theme-color" content="#172b50">
-<title>VIZIR Muhasebe V3</title>
+<meta name="theme-color" content="#142743">
+<title>VIZIR Muhasebe V4</title>
 <style>
+:root{color-scheme:light;--ink:#182945;--muted:#70809a;--navy:#142743;--green:#0d8a62;--red:#cd495b;--line:#e5eaf1;--bg:#f3f6fa}
 *{box-sizing:border-box}
-body{margin:0;background:#f1f4fa;color:#17243b;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif}
-header{background:#172b50;color:white;padding:11px 15px}
-header h2{margin:0;font-size:20px}
-header small{color:#cad6ea}
-nav{display:flex;gap:5px;padding:7px;background:white;position:sticky;top:0;z-index:2}
-nav button{flex:1;border:0;border-radius:9px;padding:12px 2px;background:#e8edf5;font-weight:700;font-size:12px}
-nav button.active{background:#172b50;color:white}
-main{max-width:650px;margin:auto;padding:10px}
-.card{background:white;border-radius:13px;padding:13px;margin-bottom:10px;box-shadow:0 2px 8px #00000009}
-h3{margin:0 0 10px;font-size:16px}
-.line{display:flex;gap:7px;align-items:center}
-input,select{width:100%;min-width:0;border:1px solid #d7dfeb;border-radius:9px;padding:12px;font-size:16px;background:white}
-button{cursor:pointer}
-.btn{border:0;border-radius:9px;padding:11px 14px;background:#172b50;color:white;font-weight:700;font-size:15px}
-.green{background:#11845b}
-.red{background:#cf4545}
-.small{font-size:12px;color:#718097}
-.amount{font-size:23px;font-weight:800}
-.item{padding:10px 0;border-bottom:1px solid #edf0f5}
-.item:last-child{border:0}
-.hidden{display:none!important}
-.summary{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.summary .card{margin:0}
-.full{width:100%}
-.pill{background:#edf1f7;border:0;border-radius:8px;padding:9px;font-weight:600}
-.actions{display:flex;gap:6px;margin-top:9px}
-.actions button{flex:1}
-.history{background:#f6f8fc;border-radius:9px;padding:9px;margin-top:8px}
-.ciro{background:#e6f5ed;border:1px solid #bce5cd}
-.ciro .amount{color:#11845b;font-size:29px}
-.datebar{display:flex;align-items:center;gap:7px}
-.datebar button{border:0;background:#e8edf5;border-radius:9px;padding:12px;font-size:20px}
-.datebar input{flex:1;text-align:center}
-.checkrow{display:flex;align-items:center;gap:9px;margin:10px 0;font-size:14px}
-.checkrow input{width:20px;height:20px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:14px}
+header{background:linear-gradient(110deg,#152844,#264b69);color:#fff;padding:12px 15px 11px;padding-top:max(12px,env(safe-area-inset-top))}
+.header{max-width:690px;margin:auto;display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:850;font-size:19px;letter-spacing:.4px}
+.subtitle{color:#bed1e5;font-size:11px;margin-top:3px}
+.version{font-size:11px;border:1px solid #ffffff40;border-radius:50px;padding:5px 9px;color:#dfecf8}
+nav{display:flex;gap:5px;background:#fff;border-bottom:1px solid var(--line);padding:7px max(8px,calc((100vw - 690px)/2));position:sticky;top:0;z-index:5}
+nav button{flex:1;min-width:0;background:#edf1f7;color:#38506c;border:0;border-radius:8px;padding:10px 3px;font-size:11.5px;font-weight:750}
+nav button.active{background:var(--navy);color:#fff}
+main{max-width:690px;margin:0 auto;padding:10px 10px max(26px,env(safe-area-inset-bottom))}
+[hidden]{display:none!important}
+.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px;margin-bottom:10px;box-shadow:0 2px 9px #16284605}
+.card h2,.card h3{margin:0 0 10px;font-size:15px}
+.eyebrow{color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.25px}
+.big{font-size:24px;line-height:1.22;font-weight:850;letter-spacing:-.5px;margin-top:5px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.green-text{color:var(--green)}
+.red-text,.negative{color:var(--red)}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.stat-grid .card{margin:0;min-width:0;min-height:95px}
+.stat-grid .big{font-size:21px}
+.stat-grid .primary{background:#e8f7ef;border-color:#c9ecdb}
+.stack{display:grid;gap:9px}
+.line{display:flex;align-items:center;gap:7px;min-width:0}
+.grow{flex:1;min-width:0}
+input,select{background:#fff;border:1px solid #d7e0eb;color:var(--ink);border-radius:9px;padding:10px 11px;font:inherit;font-size:16px;min-width:0;width:100%;outline-offset:2px}
+input[type=checkbox]{width:19px;height:19px;flex:none;accent-color:var(--green)}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:9px;padding:10px 13px;font-weight:780;white-space:nowrap;min-height:40px}
+.btn.green{background:var(--green)}
+.btn.red{background:var(--red)}
+.btn.ghost{background:#edf1f7;color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.sm{padding:8px 9px;min-height:35px;font-size:12px}
+.btn.plus{font-size:21px;width:43px;min-width:43px;padding:5px 0}
+.muted{color:var(--muted);font-size:12px;line-height:1.45}
+.note{background:#eff5ff;border:1px solid #dce7f9;border-radius:9px;padding:10px;color:#49617d;font-size:12px;line-height:1.5}
+.sale-row{display:grid;grid-template-columns:minmax(85px,1fr) minmax(100px,1.1fr) 45px;gap:7px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.sale-row.has-count{grid-template-columns:minmax(82px,1fr) minmax(92px,1.1fr) 63px 45px}
+.sale-row:last-child{border-bottom:0;padding-bottom:0}
+.sale-row .sub{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.sale-row input{padding:10px 7px;font-size:15px}
+.sale-row .qty{text-align:center}
+.entry{padding:10px 0;border-bottom:1px solid var(--line)}
+.entry:last-child{border-bottom:0;padding-bottom:0}
+.entry-title{font-weight:750;font-size:13px}
+.entry-meta{color:var(--muted);font-size:11px;margin-top:3px}
+.entry-value{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+.label{display:block;margin-bottom:6px;color:#4d6078;font-size:12px;font-weight:700}
+.picker{display:grid;grid-template-columns:42px 1fr 42px;gap:7px;align-items:center}
+.picker button{height:42px;background:#edf1f7;border:0;border-radius:9px;font-size:21px;color:var(--ink)}
+.picker input{text-align:center}
+.pill{font-size:11px;font-weight:750;border-radius:6px;padding:3px 7px;background:#edf1f7;color:#65758c;white-space:nowrap}
+.actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.actions .btn{flex:1}
+.checkrow{display:flex;align-items:center;gap:8px;font-size:13px;margin:11px 0}
+details{border-radius:10px;background:#f7f9fc;margin-top:10px}
+details summary{padding:11px;font-weight:750;cursor:pointer}
+details .details-content{padding:0 11px 11px}
+.rule-row{display:grid;grid-template-columns:1fr 100px 63px;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
+.rule-row input{padding:8px;font-size:15px}
+.footer{margin-top:16px;color:#8794a5;font-size:10px;text-align:center}
+@media(max-width:395px){
+nav button{font-size:10px}
+.sale-row.has-count{grid-template-columns:81px minmax(70px,1fr) 55px 40px;gap:4px}
+.sale-row input{padding:9px 4px}
+.btn.plus{width:40px;min-width:40px}
+.stat-grid .big{font-size:19px}
+.card{padding:11px}
+}
 </style>
 </head>
 <body>
+
 <header>
-<h2>VIZIR MUHASEBE</h2>
-<small>Finans takip sistemi · V3</small>
+<div class="header">
+<div>
+<div class="brand">VIZIR MUHASEBE</div>
+<div class="subtitle">Satış · Gider · Net kâr takibi</div>
+</div>
+<div class="version">V4</div>
+</div>
 </header>
-<nav>
-<button class="active" onclick="tab('quick',this)">Hızlı İşlem</button>
-<button onclick="tab('debts',this)">Borçlarım</button>
-<button onclick="tab('report',this)">Genel Durum</button>
+
+<nav aria-label="Bölümler">
+<button class="active" data-tab="quick">Hızlı Satış</button>
+<button data-tab="expenses">Giderler</button>
+<button data-tab="debts">Borçlarım</button>
+<button data-tab="report">Genel Durum</button>
 </nav>
+
 <main>
+
 <section id="quick">
-<div class="card ciro">
-<div class="small">BUGÜNKÜ DÜKKAN CİROSU</div>
-<div class="amount" id="todayIncome">0 ₺</div>
+<div class="stat-grid">
+<div class="card primary">
+<div class="eyebrow">BUGÜNKÜ CİRO</div>
+<div class="big green-text" id="qSales">0 ₺</div>
 </div>
 <div class="card">
-<h3>Dükkan Gelir</h3>
-<div class="line">
-<input id="income" type="number" inputmode="decimal" placeholder="Tutar ₺">
-<button class="btn green" onclick="add('income')">＋</button>
-</div>
+<div class="eyebrow">ÜRÜNLERDEN KÂR</div>
+<div class="big" id="qGross">0 ₺</div>
 </div>
 <div class="card">
-<h3>Dükkan Gider</h3>
-<div class="line">
-<input id="shop" type="number" inputmode="decimal" placeholder="Tutar ₺">
-<button class="btn red" onclick="add('shop')">＋</button>
-</div>
+<div class="eyebrow">GÜNLÜK GİDER PAYI</div>
+<div class="big" id="qCost">0 ₺</div>
 </div>
 <div class="card">
-<h3>Şahsi Gider</h3>
-<div class="line">
-<input id="personal" type="number" inputmode="decimal" placeholder="Tutar ₺">
-<button class="btn red" onclick="add('personal')">＋</button>
+<div class="eyebrow">TAHMİNİ NET KÂR</div>
+<div class="big" id="qNet">0 ₺</div>
 </div>
 </div>
+
 <div class="card">
-<h3>Son 6 İşlem</h3>
-<div id="history"></div>
+<div class="line" style="justify-content:space-between">
+<h2 style="margin:0">Ürün Satışı Ekle</h2>
+<span class="pill">KATEGORİ BAZLI</span>
+</div>
+<div style="margin:10px 0 4px">
+<label class="label" for="saleDate">Satış tarihi</label>
+<input type="date" id="saleDate">
+</div>
+<div id="salesInputs"></div>
+<p class="muted">Sandviç ve waffle için satış tutarıyla birlikte adet gir. Kâr kategori kuralına göre hesaplanır.</p>
+</div>
+
+<div class="card">
+<h2>Son 6 Satış</h2>
+<div id="recentSales"></div>
 </div>
 </section>
 
-<section id="debts" class="hidden">
+<section id="expenses" hidden>
 <div class="card">
-<h3>Yeni Borç Ekle</h3>
-<input id="debtName" placeholder="Kişi / Firma adı">
-<div class="line" style="margin-top:9px">
-<input id="debtAmount" type="number" inputmode="decimal" placeholder="Borç tutarı ₺">
-<button class="btn" onclick="newDebt()">Ekle</button>
+<h2>Aylık Sabit Giderler</h2>
+<p class="muted">Kira, maaş, internet gibi giderleri bir kere tanımla. Her ay otomatik hesaplanır ve ayın gün sayısına bölünür.</p>
+<div class="stack">
+<input id="fixedName" placeholder="Gider adı (örn. kira)" maxlength="90">
+<div class="line">
+<input id="fixedAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Aylık tutar ₺">
+<button class="btn green" id="addFixed">Ekle</button>
+</div>
+</div>
+<div id="fixedList" style="margin-top:12px"></div>
+<div class="note" style="margin-top:9px">Gider değişikliği bu aydan itibaren uygulanır. Gideri durdurursan mevcut ay tamamlanır, gelecek aylarda hesaplanmaz.</div>
+</div>
+
+<div class="card">
+<h2>Günlük Ekstra Harcama</h2>
+<div class="stack">
+<input type="date" id="expenseDate">
+<input id="extraName" maxlength="90" placeholder="Açıklama (örn. temizlik malzemesi)">
+<div class="line">
+<input id="extraAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Tutar ₺">
+<button class="btn red" id="addExtra">Ekle</button>
+</div>
+</div>
+<p class="muted">Ekstra harcamalar net kârdan düşer. Ürün kârında zaten hesaplanan malzeme maliyetini tekrar gider olarak ekleme.</p>
+<h3 id="expenseDayTitle" style="margin-top:15px">Günün ek giderleri</h3>
+<div id="extraList"></div>
+</div>
+
+<div class="stat-grid">
+<div class="card">
+<div class="eyebrow">BU AY SABİT GİDER</div>
+<div class="big" id="eMonthFixed">0 ₺</div>
+</div>
+<div class="card">
+<div class="eyebrow">BU AY EKSTRA GİDER</div>
+<div class="big" id="eMonthExtra">0 ₺</div>
+</div>
+</div>
+</section>
+
+<section id="debts" hidden>
+<div class="card">
+<h2>Yeni Borç Ekle</h2>
+<input id="debtName" maxlength="100" placeholder="Kişi / Firma adı">
+<div class="line" style="margin-top:8px">
+<input id="debtAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Borç tutarı ₺">
+<button class="btn" id="addDebt">Ekle</button>
 </div>
 <label class="checkrow">
-<input id="debtDiscount" type="checkbox" onchange="previewDiscount()">
-%15 indirim uygula
+<input type="checkbox" id="debtDiscount">
+Yeni borca %15 indirim uygula
 </label>
-<div class="small" id="discountPreview"></div>
+<div class="muted" id="discountPreview"></div>
 </div>
 <div class="card">
-<h3>Toplam Kalan Borç</h3>
-<div class="amount" id="debtTotal">0 ₺</div>
+<div class="eyebrow">TOPLAM KALAN BORÇ</div>
+<div class="big" id="debtTotal">0 ₺</div>
 </div>
 <div id="debtList"></div>
 </section>
 
-<section id="report" class="hidden">
+<section id="report" hidden>
 <div class="card">
-<h3>Günlük Ciro Takvimi</h3>
-<div class="datebar">
-<button onclick="moveDay(-1)">❮</button>
-<input id="reportDate" type="date" onchange="render()">
-<button onclick="moveDay(1)">❯</button>
+<h2>Günlük Durum</h2>
+<div class="picker">
+<button id="previousDay" aria-label="Önceki gün">‹</button>
+<input id="reportDate" type="date">
+<button id="nextDay" aria-label="Sonraki gün">›</button>
 </div>
-<div class="small" style="margin-top:12px">Seçilen günün cirosu</div>
-<div class="amount" id="selectedIncome">0 ₺</div>
-<div class="small" style="margin-top:8px" id="selectedExpenses"></div>
+<div class="stat-grid" style="margin:12px 0 0">
+<div class="card" style="background:#f8fafc">
+<div class="eyebrow">CİRO</div>
+<div class="big" id="rDaySales">0 ₺</div>
+</div>
+<div class="card" style="background:#f8fafc">
+<div class="eyebrow">ÜRÜNLERDEN KÂR</div>
+<div class="big" id="rDayGross">0 ₺</div>
+</div>
+<div class="card" style="background:#f8fafc">
+<div class="eyebrow">SABİT GİDER PAYI</div>
+<div class="big" id="rDayFixed">0 ₺</div>
+</div>
+<div class="card" style="background:#f8fafc">
+<div class="eyebrow">EKSTRA GİDER</div>
+<div class="big" id="rDayExtra">0 ₺</div>
+</div>
+</div>
+<div class="line" style="justify-content:space-between;margin-top:12px">
+<b>Günlük tahmini net kâr</b>
+<div class="big" id="rDayNet">0 ₺</div>
+</div>
+</div>
+
+<div class="card">
+<h2>Aylık Net Durum</h2>
+<label class="label" for="reportMonth">İncelenen ay</label>
+<input id="reportMonth" type="month">
+<div class="stat-grid" style="margin:12px 0 0">
+<div class="card">
+<div class="eyebrow">AYLIK CİRO</div>
+<div class="big" id="rMonthSales">0 ₺</div>
 </div>
 <div class="card">
-<h3>Rapor Dönemi</h3>
-<select id="period" onchange="render()">
-<option value="today">Bugün</option>
-<option value="week">Son 7 Gün</option>
-<option value="month">Bu Ay</option>
-<option value="all" selected>Tüm Zamanlar</option>
-</select>
-</div>
-<div class="summary">
-<div class="card"><div class="small">Dükkan Gelir</div><div class="amount" id="rIncome">0 ₺</div></div>
-<div class="card"><div class="small">Dükkan Gider</div><div class="amount" id="rShop">0 ₺</div></div>
-<div class="card"><div class="small">Şahsi Gider</div><div class="amount" id="rPersonal">0 ₺</div></div>
-<div class="card"><div class="small">Kalan Borç</div><div class="amount" id="rDebt">0 ₺</div></div>
-</div>
-<div class="card" style="margin-top:10px">
-<div class="small">Ortalama Günlük Ciro</div>
-<div class="amount" id="averageIncome">0 ₺</div>
-<div class="small">Seçilen dönemde satış kaydı olan günlerin ortalaması</div>
+<div class="eyebrow">ÜRÜNLERDEN KÂR</div>
+<div class="big" id="rMonthGross">0 ₺</div>
 </div>
 <div class="card">
-<h3>Gelir − Gider</h3>
-<div class="amount" id="rBalance">0 ₺</div>
-<p class="small">Bu gelir-gider farkıdır, kasa bakiyesi değildir. Borç ödemeleri giderlere otomatik eklenmez.</p>
+<div class="eyebrow">AYLIK SABİT GİDER</div>
+<div class="big" id="rMonthFixed">0 ₺</div>
 </div>
 <div class="card">
-<h3>Yedekleme</h3>
-<button class="btn full" onclick="backup()">Yedek İndir</button>
-<p class="small">Yedek dosyanı güvenli bir yerde sakla.</p>
-<input type="file" id="restoreFile" accept=".json,application/json" onchange="restoreBackup(event)">
-<p class="small">Geri yükleme mevcut kayıtların yerine geçer.</p>
+<div class="eyebrow">AYLIK EKSTRA GİDER</div>
+<div class="big" id="rMonthExtra">0 ₺</div>
 </div>
+</div>
+<div class="line" style="justify-content:space-between;margin-top:12px">
+<b>Toplam aylık gider</b>
+<b id="rMonthCosts">0 ₺</b>
+</div>
+<div class="line" style="justify-content:space-between;margin-top:14px">
+<b>Bu ay tahmini net kâr</b>
+<div class="big" id="rMonthNet">0 ₺</div>
+</div>
+<p class="muted">Tam ay hesabı: ürünlerden kâr − aylık sabit giderler − ekstra giderler.</p>
+</div>
+
+<div class="card">
+<div class="eyebrow">SATIŞ OLAN GÜNLERİN ORTALAMA GÜNLÜK CİROSU</div>
+<div class="big" id="rAverage">0 ₺</div>
+<p class="muted">Seçili ayda satış kaydı bulunan günlere göre hesaplanır.</p>
+</div>
+
+<div class="card">
+<h2>Kategori Bazında Aylık Satışlar</h2>
+<div id="categoryReport"></div>
+</div>
+
+<div class="card">
+<h2>Kâr Kuralları</h2>
+<p class="muted">Kâr oranlarını değiştirebilirsin. Yeni kurallar yalnızca bundan sonraki satışlarda geçerli olur.</p>
+<div id="rulesList"></div>
+</div>
+
+<div class="card">
+<h2>Yedekleme</h2>
+<div class="stack">
+<button id="backup" class="btn">Tüm Verileri Yedekle (JSON)</button>
+<input type="file" id="restoreFile" accept=".json,application/json">
+</div>
+<p class="muted">Eski V3 kayıtları ve borç geçmişi de bu yedeğe dahildir. Geri yükleme mevcut verilerin yerine geçer.</p>
+</div>
+
+<details>
+<summary>V3 eski gelir-gider kayıtları (arşiv)</summary>
+<div class="details-content">
+<p class="muted">Eski kayıtlar silinmedi. V4 net kârına dahil edilmez.</p>
+<div id="legacySummary"></div>
+<div id="legacyHistory"></div>
+</div>
+</details>
 </section>
+
+<div class="footer">VIZIR MUHASEBE V4 · Veriler bu cihazda saklanır.</div>
 </main>
+
 <script>
 "use strict";
+
 const KEY="vizir_muhasebe_v1";
-const empty=()=>({transactions:[],debts:[]});
-let db;
-let loadError=false;
-try{
- const saved=localStorage.getItem(KEY);
- db=saved?JSON.parse(saved):empty();
- if(!db||!Array.isArray(db.transactions)||!Array.isArray(db.debts))throw Error("Veri biçimi");
-}catch(e){
- loadError=true;
- db=empty();
- alert("Mevcut kayıtlar okunamadı. Kayıt eklemeden önce yedeğini geri yükle.");
-}
+const SNAPSHOT="vizir_muhasebe_pre_v4_snapshot";
+
+const CATEGORIES=[
+{id:"coffee",name:"Kahve",method:"percent",value:40},
+{id:"sandwich",name:"Sandviç",method:"piece",value:30},
+{id:"waffle",name:"Waffle",method:"piece",value:60},
+{id:"deli",name:"Şarküteri",method:"percent",value:20},
+{id:"dessert",name:"Tatlı",method:"percent",value:25},
+{id:"toast",name:"Tost",method:"percent",value:30},
+{id:"other",name:"Diğer",method:"percent",value:20}
+];
+
 const $=id=>document.getElementById(id);
-const uid=()=>Date.now()+Math.random();
-const money=n=>Number(n||0).toLocaleString("tr-TR",{style:"currency",currency:"TRY"});
-const round=n=>Math.round((n+Number.EPSILON)*100)/100;
-const valid=n=>Number.isFinite(n)&&n>0;
-function safe(s){
- return String(s).replace(/[&<>"']/g,c=>({
- "&":"&amp;","<":"&lt;",">":"&gt;",
- '"':"&quot;","'":"&#39;"
- })[c]);
+const fmt=new Intl.NumberFormat("tr-TR",{
+style:"currency",currency:"TRY",maximumFractionDigits:2
+});
+const money=v=>fmt.format(Number(v)||0);
+const rnd=n=>Math.round((Number(n)+Number.EPSILON)*100)/100;
+const pos=n=>Number.isFinite(n)&&n>0;
+const num=s=>Number(String(s??"").trim().replace(",","."));
+const uid=()=>String(Date.now())+"-"+Math.random().toString(36).slice(2,9);
+const esc=s=>String(s??"").replace(/[&<>"']/g,ch=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",
+'"':"&quot;","'":"&#39;"
+})[ch]);
+
+function dayKey(date=new Date()){
+ const d=date instanceof Date?date:new Date(date);
+ if(!Number.isFinite(d.getTime()))return "";
+ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
-function localDate(date){
- const d=new Date(date);
- if(Number.isNaN(d.getTime()))return "";
- return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+function entryDay(x){
+ const d=x?.saleDay||x?.expenseDay;
+ return /^\d{4}-\d{2}-\d{2}$/.test(d||"")?d:dayKey(x?.date);
 }
-function save(){
- if(loadError){alert("Kayıtlar okunamadığı için üzerine yazma engellendi.");return;}
- try{
- localStorage.setItem(KEY,JSON.stringify(db));
- render();
- }catch(e){alert("Kaydetme başarısız. Depolama alanını kontrol et.");}
+const monthOf=day=>String(day||"").slice(0,7);
+function monthDays(month){
+ if(!/^\d{4}-\d{2}$/.test(month||""))return 30;
+ const [y,m]=month.split("-").map(Number);
+ return new Date(y,m,0).getDate();
 }
-function tab(id,btn){
- document.querySelectorAll("main section").forEach(x=>x.classList.add("hidden"));
- $(id).classList.remove("hidden");
- document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
- btn.classList.add("active");
- render();
+function monthShift(month,n){
+ const [y,m]=month.split("-").map(Number);
+ return dayKey(new Date(y,m-1+n,1,12)).slice(0,7);
 }
-function add(type){
- if(loadError)return alert("Önce yedeğini geri yükle.");
- const el=$(type),n=Number(el.value);
- if(!valid(n))return alert("Geçerli tutar gir.");
- db.transactions.unshift({id:uid(),type,amount:round(n),date:new Date().toISOString()});
- el.value="";
- save();
+function dayShift(day,n){
+ const [y,m,d]=day.split("-").map(Number);
+ return dayKey(new Date(y,m-1,d+n,12));
 }
-function removeTransaction(id){
- if(!confirm("Bu gelir/gider kaydı silinsin mi?"))return;
- db.transactions=db.transactions.filter(x=>x.id!==id);
- save();
+function fromDay(day){
+ return new Date(day+"T12:00:00").toISOString();
 }
-function previewDiscount(){
- const n=Number($("debtAmount").value);
- const discounted=$("debtDiscount").checked;
- $("discountPreview").textContent=valid(n)?
- "Kaydedilecek borç: "+money(round(n*(discounted?0.85:1))):
- "";
-}
-$("debtAmount").addEventListener("input",previewDiscount);
-function newDebt(){
- if(loadError)return alert("Önce yedeğini geri yükle.");
- const name=$("debtName").value.trim();
- const n=Number($("debtAmount").value);
- const discount=$("debtDiscount").checked;
- if(!name||!valid(n))return alert("Ad ve geçerli tutar gir.");
- const amount=round(n*(discount?0.85:1));
- db.debts.push({
- id:uid(),name,initial:amount,remaining:amount,
- discount15:discount,payments:[]
+function formatDay(day){
+ if(!day)return "";
+ return new Date(day+"T12:00:00").toLocaleDateString("tr-TR",{
+ day:"numeric",month:"long",year:"numeric"
  });
- $("debtName").value="";
- $("debtAmount").value="";
- $("debtDiscount").checked=false;
- previewDiscount();
- save();
 }
-function changeDebt(id,sign){
- if(loadError)return alert("Önce yedeğini geri yükle.");
- const d=db.debts.find(x=>x.id===id);
- const el=$("pay"+id);
- const n=Number(el?.value);
- if(!d||!valid(n))return alert("Geçerli tutar gir.");
- const discount=sign>0&&d.discount15===true;
- const amount=round(n*(discount?0.85:1));
- if(sign<0&&amount>Number(d.remaining))return alert("Ödeme kalan borçtan fazla olamaz.");
- d.remaining=round(Number(d.remaining)+sign*amount);
- if(!Array.isArray(d.payments))d.payments=[];
- d.payments.push({
- id:uid(),amount:sign*amount,
- enteredAmount:n,discounted:discount,
- date:new Date().toISOString()
- });
- save();
+
+let db,readOnly=false;
+
+try{
+ const raw=localStorage.getItem(KEY);
+ db=raw?JSON.parse(raw):{transactions:[],debts:[]};
+ if(!db||typeof db!=="object"||
+ !Array.isArray(db.transactions)||
+ !Array.isArray(db.debts))
+ throw Error("V3 veri biçimi tanınmadı");
+
+ if(db.v4!==undefined&&(
+ typeof db.v4!=="object"||
+ db.v4===null||
+ !Array.isArray(db.v4.sales)||
+ !Array.isArray(db.v4.extras)||
+ !Array.isArray(db.v4.fixed)
+ ))throw Error("V4 veri biçimi tanınmadı");
+}catch(e){
+ readOnly=true;
+ db={transactions:[],debts:[]};
+ alert("Eski kayıtlar okunamadı. Üzerine yazma engellendi. Önce yedeğini kontrol et.");
 }
-function undoDebt(id){
- const d=db.debts.find(x=>x.id===id);
- if(!d||!d.payments?.length)return;
- const last=d.payments[d.payments.length-1];
- if(!confirm("Son borç işlemi geri alınsın mı?"))return;
- const old=round(Number(d.remaining)-Number(last.amount));
- if(old<0)return alert("İşlem geri alınamadı.");
- d.remaining=old;
- d.payments.pop();
- save();
+
+function v4(){
+ if(!db.v4)db.v4={
+ sales:[],extras:[],fixed:[],rules:{}
+ };
+ if(!db.v4.rules)db.v4.rules={};
+ return db.v4;
 }
-function deleteDebt(id){
- const d=db.debts.find(x=>x.id===id);
- if(!d)return;
- if(!confirm(d.name+" adlı kişiyi, borcunu ve tüm geçmişini tamamen silmek istiyor musun?"))return;
- db.debts=db.debts.filter(x=>x.id!==id);
- save();
+
+function getRule(c){
+ const r=v4().rules[c.id];
+ return r&&Number.isFinite(Number(r.value))
+ ?{method:c.method,value:Number(r.value)}
+ :{method:c.method,value:c.value};
 }
-function toggleHistory(id){
- const el=$("dh"+id);
- if(el)el.classList.toggle("hidden");
-}
-function toggleDiscount(id){
- const d=db.debts.find(x=>x.id===id);
- if(!d)return;
- d.discount15=!d.discount15;
- save();
-}
-function moveDay(delta){
- const value=$("reportDate").value;
- if(!value)return;
- const [y,m,d]=value.split("-").map(Number);
- const date=new Date(y,m-1,d+delta,12);
- $("reportDate").value=localDate(date);
- render();
-}
-function periodMatch(date,period){
- const d=new Date(date),now=new Date();
- if(Number.isNaN(d.getTime()))return false;
- if(period==="all")return true;
- if(period==="today")return localDate(d)===localDate(now);
- if(period==="week"){
- const start=new Date(now.getFullYear(),now.getMonth(),now.getDate()-6);
- return d>=start&&d<=now;
+
+function write(fn){
+ if(readOnly){
+ alert("Veriler okunamadığı için kayıt işlemi engellendi.");
+ return false;
  }
- if(period==="month")return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();
- return true;
+ const before=JSON.stringify(db);
+ try{
+  if(!localStorage.getItem(SNAPSHOT)){
+   localStorage.setItem(
+    SNAPSHOT,
+    localStorage.getItem(KEY)||before
+   );
+  }
+  fn();
+  localStorage.setItem(KEY,JSON.stringify(db));
+  render();
+  return true;
+ }catch(e){
+  try{db=JSON.parse(before);}catch{}
+  alert("Kaydetme başarısız. Mevcut kayıtlar korunuyor.");
+  render();
+  return false;
+ }
 }
-function render(){
- const names={income:"Dükkan Gelir",shop:"Dükkan Gider",personal:"Şahsi Gider"};
- const today=localDate(new Date());
- const todaySum=db.transactions.filter(x=>x.type==="income"&&localDate(x.date)===today)
- .reduce((s,x)=>s+Number(x.amount||0),0);
- $("todayIncome").textContent=money(todaySum);
- $("history").innerHTML=db.transactions.slice(0,6).map(x=>`
- <div class="item line">
- <div style="flex:1">
- <b>${names[x.type]||"İşlem"}</b>
- <div class="small">${new Date(x.date).toLocaleString("tr-TR")}</div>
- </div>
- <b>${money(x.amount)}</b>
- <button class="pill" onclick="removeTransaction(${Number(x.id)})">Sil</button>
- </div>`).join("")||'<p class="small">Henüz işlem yok.</p>';
- $("debtList").innerHTML=db.debts.map(d=>{
- const payments=Array.isArray(d.payments)?d.payments:[];
- const history=payments.slice().reverse().map(p=>`
- <div class="item">
- <div class="small">${new Date(p.date).toLocaleString("tr-TR")}</div>
- <b>${Number(p.amount)<0?"Ödeme":"Borç artışı"}: ${money(Math.abs(Number(p.amount)))}</b>
- ${p.discounted?'<div class="small">%15 indirim uygulandı</div>':""}
- </div>`).join("");
- return `<div class="card">
- <div class="line" style="justify-content:space-between">
- <b>${safe(d.name)}</b>
- <button class="pill" onclick="deleteDebt(${Number(d.id)})">Sil</button>
- </div>
- <div class="amount" style="margin:8px 0">${money(d.remaining)}</div>
- <label class="checkrow">
- <input type="checkbox" ${d.discount15?"checked":""}
- onchange="toggleDiscount(${Number(d.id)})">
- Yeni borçlara %15 indirim
- </label>
+
+function salesBetween(month){
+ return v4().sales.filter(x=>
+ !x.voided&&monthOf(entryDay(x))===month
+ );
+}
+function extrasBetween(month){
+ return v4().extras.filter(x=>
+ !x.voided&&monthOf(entryDay(x))===month
+ );
+}
+function salesOn(day){
+ return v4().sales.filter(x=>
+ !x.voided&&entryDay(x)===day
+ );
+}
+function extrasOn(day){
+ return v4().extras.filter(x=>
+ !x.voided&&entryDay(x)===day
+ );
+}
+function activeFixed(month){
+ return v4().fixed.filter(x=>
+ x.startMonth<=month&&
+ (!x.endMonth||x.endMonth>=month)
+ );
+}
+function sum(list,key){
+ return list.reduce((a,x)=>a+Number(x[key]||0),0);
+}
+function monthFixed(month){
+ return sum(activeFixed(month),"amount");
+}
+function dayStats(day){
+ const sales=salesOn(day);
+ const extras=extrasOn(day);
+ const fixedDaily=monthFixed(monthOf(day))/monthDays(monthOf(day));
+ const revenue=sum(sales,"amount");
+ const profit=sum(sales,"profit");
+ const extra=sum(extras,"amount");
+ return {
+  revenue,profit,fixedDaily,extra,
+  net:profit-fixedDaily-extra
+ };
+}
+function monthStats(month){
+ const sales=salesBetween(month);
+ const extras=extrasBetween(month);
+ const fixed=monthFixed(month);
+ const revenue=sum(sales,"amount");
+ const profit=sum(sales,"profit");
+ const extra=sum(extras,"amount");
+ return {
+  revenue,profit,fixed,extra,
+  net:profit-fixed-extra
+ };
+}
+function setMoney(id,val){
+ $(id).textContent=money(val);
+}
+function setNet(id,val){
+ const node=$(id);
+ node.textContent=money(val);
+ node.classList.toggle("negative",val<0);
+ node.classList.toggle("green-text",val>=0);
+}
+
+function salesInputTemplate(){
+ $("salesInputs").innerHTML=CATEGORIES.map(c=>{
+  const r=getRule(c);
+  const label=r.method==="piece"
+  ?`+${money(r.value)} / adet`
+  :`%${r.value} kâr`;
+
+  return `
+  <div class="sale-row ${r.method==="piece"?"has-count":""}"
+       data-category="${c.id}">
+   <div>
+    <b>${c.name}</b>
+    <span class="sub">${label}</span>
+   </div>
+   <input class="saleAmount" type="number"
+    min="0" step="0.01" inputmode="decimal"
+    placeholder="Tutar ₺"
+    aria-label="${c.name} satış tutarı">
+   ${r.method==="piece"?`
+    <input class="saleQty qty" type="number"
+     inputmode="numeric" min="1" step="1" value="1"
+     aria-label="${c.name} adedi">`:""}
+   <button class="btn green plus"
+    data-action="addSale"
+    aria-label="${c.name} satışı ekle">+</button>
+  </div>`;
+ }).join("");
+}
+
+function addSale(row){
+ const c=CATEGORIES.find(x=>x.id===row.dataset.category);
+ const amount=num(row.querySelector(".saleAmount").value);
+ const qtyNode=row.querySelector(".saleQty");
+ const qty=qtyNode?num(qtyNode.value):1;
+ const d=$("saleDate").value;
+
+ if(!c||!pos(amount)||!Number.isInteger(qty)||
+ qty<1||!/^\d{4}-\d{2}-\d{2}$/.test(d)){
+  alert("Geçerli satış tutarı, adet ve tarih gir.");
+  return;
+ }
+
+ const r=getRule(c);
+ const profit=r.method==="percent"
+ ?rnd(amount*r.value/100)
+ :rnd(qty*r.value);
+
+ if(profit>amount){
+  alert("Hesaplanan kâr satış tutarından yüksek. Adedi veya tutarı kontrol et.");
+  return;
+ }
+
+ if(write(()=>{
+  v4().sales.unshift({
+   id:uid(),
+   category:c.id,
+   categoryName:c.name,
+   amount:rnd(amount),
+   qty,profit,
+   rule:{...r},
+   saleDay:d,
+   date:fromDay(d),
+   voided:false
+  });
+ })){
+  row.querySelector(".saleAmount").value="";
+  if(qtyNode)qtyNode.value="1";
+ }
+}
+
+function voidSale(id){
+ const entry=v4().sales.find(x=>String(x.id)===String(id));
+ if(!entry)return;
+ if(!confirm(
+  `${entry.categoryName||"Satış"} ${money(entry.amount)} kaydını iptal etmek istiyor musun?`
+ ))return;
+ write(()=>entry.voided=true);
+}
+
+function addExtra(){
+ const name=$("extraName").value.trim();
+ const amount=num($("extraAmount").value);
+ const day=$("expenseDate").value;
+
+ if(!name||!pos(amount)||
+ !/^\d{4}-\d{2}-\d{2}$/.test(day)){
+  alert("Gider adı, tutarı ve tarihi gerekli.");
+  return;
+ }
+
+ if(write(()=>{
+  v4().extras.unshift({
+   id:uid(),name,
+   amount:rnd(amount),
+   expenseDay:day,
+   date:fromDay(day),
+   voided:false
+  });
+ })){
+  $("extraName").value="";
+  $("extraAmount").value="";
+ }
+}
+
+function voidExtra(id){
+ const x=v4().extras.find(e=>String(e.id)===String(id));
+ if(!x)return;
+ if(!confirm(`${x.name} gider kaydı iptal edilsin mi?`))return;
+ write(()=>x.voided=true);
+}
+
+function addFixed(){
+ const name=$("fixedName").value.trim();
+ const amount=num($("fixedAmount").value);
+
+ if(!name||!pos(amount)){
+  alert("Gider adı ve aylık tutarı gir.");
+  return;
+ }
+
+ if(write(()=>{
+  v4().fixed.push({
+   id:uid(),name,
+   amount:rnd(amount),
+   startMonth:monthOf(dayKey()),
+   endMonth:null
+  });
+ })){
+  $("fixedName").value="";
+  $("fixedAmount").value="";
+ }
+}
+
+function editFixed(id){
+ const m=monthOf(dayKey());
+ const x=v4().fixed.find(e=>String(e.id)===String(id));
+ if(!x||x.startMonth>m||
+ (x.endMonth&&x.endMonth<m))return;
+
+ const input=prompt(
+  `${x.name} için yeni aylık tutar (₺):`,
+  String(x.amount)
+ );
+ if(input===null)return;
+
+ const amount=num(input);
+ if(!pos(amount)){
+  alert("Geçerli tutar gir.");
+  return;
+ }
+
+ if(!confirm(
+  `Yeni tutar ${money(amount)} olacak. Bu aydan itibaren uygulansın mı?`
+ ))return;
+
+ write(()=>{
+  x.endMonth=monthShift(m,-1);
+  v4().fixed.push({
+   id:uid(),
+   name:x.name,
+   amount:rnd(amount),
+   startMonth:m,
+   endMonth:null
+  });
+ });
+}
+
+function pauseFixed(id){
+ const m=monthOf(dayKey());
+ const x=v4().fixed.find(e=>String(e.id)===String(id));
+ if(!x)return;
+ if(!confirm(
+  `${x.name} gideri gelecek aydan itibaren hesaptan çıkarılsın mı?`
+ ))return;
+ write(()=>{x.endMonth=m;});
+}
+
+function newDebt(){
+ const name=$("debtName").value.trim();
+ const amount=num($("debtAmount").value);
+ const discount=$("debtDiscount").checked;
+
+ if(!name||!pos(amount)){
+  alert("Ad ve geçerli borç tutarı gir.");
+  return;
+ }
+
+ const final=rnd(amount*(discount?.85:1));
+
+ if(write(()=>{
+  db.debts.push({
+   id:uid(),
+   name,
+   initial:final,
+   remaining:final,
+   discount15:discount,
+   payments:[]
+  });
+ })){
+  $("debtName").value="";
+  $("debtAmount").value="";
+  $("debtDiscount").checked=false;
+  previewDiscount();
+ }
+}
+
+function debtChange(id,sign,card){
+ const d=db.debts.find(x=>String(x.id)===String(id));
+ if(!d)return;
+
+ const entered=num(card.querySelector(".debtEntry").value);
+ if(!pos(entered)){
+  alert("Geçerli tutar gir.");
+  return;
+ }
+
+ const discount=sign>0&&d.discount15===true;
+ const amount=rnd(entered*(discount?.85:1));
+
+ if(sign<0&&amount>Number(d.remaining||0)){
+  alert("Ödeme kalan borçtan fazla olamaz.");
+  return;
+ }
+
+ write(()=>{
+  d.remaining=rnd(Number(d.remaining||0)+sign*amount);
+  if(!Array.isArray(d.payments))d.payments=[];
+  d.payments.push({
+   id:uid(),
+   amount:sign*amount,
+   enteredAmount:entered,
+   discounted:discount,
+   date:new Date().toISOString()
+  });
+ });
+}
+
+function debtUndo(id){
+ const d=db.debts.find(x=>String(x.id)===String(id));
+ if(!d||!Array.isArray(d.payments)||!d.payments.length)return;
+
+ const p=d.payments[d.payments.length-1];
+ const n=rnd(
+  Number(d.remaining||0)-Number(p.amount||0)
+ );
+
+ if(n<0){
+  alert("Bu işlem geri alınamaz.");
+  return;
+ }
+ if(!confirm("Son borç işlemi geri alınsın mı?"))return;
+
+ write(()=>{
+  d.remaining=n;
+  d.payments.pop();
+ });
+}
+
+function debtDelete(id){
+ const d=db.debts.find(x=>String(x.id)===String(id));
+ if(!d)return;
+ if(!confirm(
+  `${d.name} ve tüm borç geçmişi tamamen silinsin mi?`
+ ))return;
+ write(()=>{
+  db.debts=db.debts.filter(x=>String(x.id)!==String(id));
+ });
+}
+
+function debtToggleDiscount(id){
+ const d=db.debts.find(x=>String(x.id)===String(id));
+ if(d)write(()=>d.discount15=!d.discount15);
+}
+
+function previewDiscount(){
+ const n=num($("debtAmount").value);
+ $("discountPreview").textContent=pos(n)
+ ?"Kaydedilecek borç: "+money(
+  rnd(n*($("debtDiscount").checked?.85:1))
+ )
+ :"";
+}
+
+function saveRule(id){
+ const c=CATEGORIES.find(x=>x.id===id);
+ const el=$("rule-"+id);
+ if(!c||!el)return;
+ const n=num(el.value);
+
+ if(!Number.isFinite(n)||n<0||
+ (c.method==="percent"&&n>100)){
+  alert(
+   c.method==="percent"
+   ?"Kâr yüzdesi 0–100 arasında olmalı."
+   :"Geçerli adet başına kâr gir."
+  );
+  return;
+ }
+ if(write(()=>{
+  v4().rules[id]={
+   method:c.method,
+   value:rnd(n)
+  };
+ })){
+  salesInputTemplate();
+ }
+}
+
+function renderQuick(){
+ const s=dayStats(dayKey());
+ setMoney("qSales",s.revenue);
+ setMoney("qGross",s.profit);
+ setMoney("qCost",s.fixedDaily+s.extra);
+ setNet("qNet",s.net);
+
+ $("recentSales").innerHTML=v4().sales
+ .filter(x=>!x.voided)
+ .slice()
+ .sort((a,b)=>String(b.date).localeCompare(String(a.date)))
+ .slice(0,6)
+ .map(x=>`
+ <div class="entry">
  <div class="line">
- <input id="pay${Number(d.id)}" type="number" inputmode="decimal" placeholder="Tutar ₺">
- <button class="btn green" onclick="changeDebt(${Number(d.id)},1)">＋</button>
- <button class="btn red" onclick="changeDebt(${Number(d.id)},-1)">−</button>
+ <div class="grow">
+  <div class="entry-title">${esc(x.categoryName||CATEGORIES.find(c=>c.id===x.category)?.name||"Satış")}</div>
+  <div class="entry-meta">${formatDay(entryDay(x))}${x.rule?.method==="piece"?" · "+Number(x.qty||1)+" adet":""}</div>
  </div>
- <div class="actions">
- <button class="pill" onclick="toggleHistory(${Number(d.id)})">Geçmiş</button>
- <button class="pill" onclick="undoDebt(${Number(d.id)})" ${payments.length?"":"disabled"}>Geri Al</button>
+ <div class="entry-value">
+  ${money(x.amount)}
+  <div class="entry-meta green-text">Kâr ${money(x.profit)}</div>
  </div>
- <div class="history hidden" id="dh${Number(d.id)}">
- ${history||'<span class="small">Henüz işlem yok.</span>'}
+ <button class="btn ghost sm"
+ data-action="voidSale" data-id="${esc(x.id)}">İptal</button>
  </div>
- </div>`;
- }).join("")||'<div class="card small">Henüz borç eklenmedi.</div>';
- const period=$("period").value;
- const filtered=db.transactions.filter(x=>periodMatch(x.date,period));
- const sum=(list,type)=>list.filter(x=>x.type===type)
- .reduce((a,x)=>a+Number(x.amount||0),0);
- const i=sum(filtered,"income"),s=sum(filtered,"shop"),p=sum(filtered,"personal");
- const debt=db.debts.reduce((a,x)=>a+Number(x.remaining||0),0);
- $("debtTotal").textContent=money(debt);
- $("rIncome").textContent=money(i);
- $("rShop").textContent=money(s);
- $("rPersonal").textContent=money(p);
- $("rDebt").textContent=money(debt);
- $("rBalance").textContent=money(i-s-p);
- const days=new Set(filtered.filter(x=>x.type==="income"&&Number(x.amount)>0)
- .map(x=>localDate(x.date)));
- $("averageIncome").textContent=money(days.size?i/days.size:0);
- const selected=$("reportDate").value;
- const daily=db.transactions.filter(x=>localDate(x.date)===selected);
- $("selectedIncome").textContent=money(sum(daily,"income"));
- $("selectedExpenses").textContent="Dükkan gider: "+money(sum(daily,"shop"))+
- " · Şahsi gider: "+money(sum(daily,"personal"));
+ </div>`).join("")
+ ||'<p class="muted">Henüz satış kaydı yok.</p>';
 }
+
+function renderExpenses(){
+ const todayMonth=monthOf(dayKey());
+ const fixed=activeFixed(todayMonth);
+ const day=$("expenseDate").value||dayKey();
+
+ $("fixedList").innerHTML=fixed.map(x=>`
+ <div class="entry">
+  <div class="line">
+   <div class="grow">
+    <div class="entry-title">${esc(x.name)}</div>
+    <div class="entry-meta">Her ay otomatik hesaplanır</div>
+   </div>
+   <div class="entry-value">${money(x.amount)}</div>
+  </div>
+  <div class="actions">
+   <button class="btn ghost sm" data-action="editFixed"
+   data-id="${esc(x.id)}">Tutarı değiştir</button>
+   <button class="btn ghost sm" data-action="pauseFixed"
+   data-id="${esc(x.id)}" ${x.endMonth?'disabled':''}>
+   ${x.endMonth?'Ay sonunda duracak':'Gelecek ay durdur'}
+   </button>
+  </div>
+ </div>`).join("")
+ ||'<p class="muted">Henüz sabit gider tanımlanmadı.</p>';
+
+ $("expenseDayTitle").textContent=formatDay(day)+" · Ek giderler";
+
+ $("extraList").innerHTML=extrasOn(day)
+ .slice().reverse()
+ .map(x=>`
+ <div class="entry">
+ <div class="line">
+ <div class="grow"><b>${esc(x.name)}</b></div>
+ <div class="entry-value">${money(x.amount)}</div>
+ <button class="btn ghost sm"
+ data-action="voidExtra" data-id="${esc(x.id)}">İptal</button>
+ </div>
+ </div>`).join("")
+ ||'<p class="muted">Bu güne ait ekstra gider bulunmuyor.</p>';
+
+ setMoney("eMonthFixed",monthFixed(todayMonth));
+ setMoney("eMonthExtra",sum(extrasBetween(todayMonth),"amount"));
+}
+
+function renderDebts(){
+ setMoney("debtTotal",sum(db.debts,"remaining"));
+
+ $("debtList").innerHTML=db.debts.map(d=>{
+  const pays=Array.isArray(d.payments)?d.payments:[];
+
+  return `<div class="card" data-debt-id="${esc(d.id)}">
+   <div class="line" style="justify-content:space-between">
+    <b>${esc(d.name)}</b>
+    <button class="btn ghost sm" data-action="deleteDebt">Sil</button>
+   </div>
+   <div class="big" style="margin:8px 0 5px">${money(d.remaining)}</div>
+   <label class="checkrow">
+    <input type="checkbox" class="debtDiscountToggle"
+    ${d.discount15?'checked':''}>
+    Yeni borçlara %15 indirim
+   </label>
+   <div class="line">
+    <input class="debtEntry" type="number" inputmode="decimal"
+    min="0" step="0.01" placeholder="Tutar ₺">
+    <button class="btn green plus" data-action="debtPlus">+</button>
+    <button class="btn red plus" data-action="debtMinus">−</button>
+   </div>
+   <div class="actions">
+    <button class="btn ghost sm" data-action="historyDebt">Geçmiş</button>
+    <button class="btn ghost sm" data-action="undoDebt"
+    ${pays.length?'':'disabled'}>Son İşlemi Geri Al</button>
+   </div>
+   <div class="dHistory" hidden>
+   ${pays.slice().reverse().map(p=>`
+    <div class="entry">
+     <div class="entry-meta">${new Date(p.date).toLocaleString('tr-TR')}</div>
+     <b>${Number(p.amount)<0?'Ödeme':'Borç artışı'} ${money(Math.abs(Number(p.amount)))}</b>
+     ${p.discounted?'<span class="entry-meta"> · %15 indirimli</span>':''}
+    </div>`).join('')
+    ||'<p class="muted">Geçmiş işlem yok.</p>'}
+   </div>
+  </div>`;
+ }).join("")
+ ||'<div class="card muted">Henüz borçlu eklenmedi.</div>';
+}
+
+function renderReport(){
+ const day=$("reportDate").value||dayKey();
+ const month=$("reportMonth").value||monthOf(dayKey());
+ const ds=dayStats(day);
+ const ms=monthStats(month);
+
+ setMoney("rDaySales",ds.revenue);
+ setMoney("rDayGross",ds.profit);
+ setMoney("rDayFixed",ds.fixedDaily);
+ setMoney("rDayExtra",ds.extra);
+ setNet("rDayNet",ds.net);
+
+ setMoney("rMonthSales",ms.revenue);
+ setMoney("rMonthGross",ms.profit);
+ setMoney("rMonthFixed",ms.fixed);
+ setMoney("rMonthExtra",ms.extra);
+ setMoney("rMonthCosts",ms.fixed+ms.extra);
+ setNet("rMonthNet",ms.net);
+
+ const sales=salesBetween(month);
+ const days=new Set(sales.map(entryDay));
+ setMoney("rAverage",days.size?ms.revenue/days.size:0);
+
+ $("categoryReport").innerHTML=CATEGORIES.map(c=>{
+  const entries=sales.filter(x=>x.category===c.id);
+  if(!entries.length)return '';
+
+  return `<div class="entry">
+   <div class="line">
+    <div class="grow">
+     <b>${c.name}</b>
+     <div class="entry-meta">${entries.length} satış kaydı${c.method==='piece'?' · '+sum(entries,'qty')+' adet':''}</div>
+    </div>
+    <div class="entry-value">
+     ${money(sum(entries,'amount'))}
+     <div class="entry-meta green-text">Kâr ${money(sum(entries,'profit'))}</div>
+    </div>
+   </div>
+  </div>`;
+ }).join("")
+ ||'<p class="muted">Bu ay kategori satışı yok.</p>';
+
+ $("rulesList").innerHTML=CATEGORIES.map(c=>{
+  const r=getRule(c);
+  return `<div class="rule-row">
+   <div>
+    <b>${c.name}</b>
+    <div class="entry-meta">${r.method==='piece'?'₺ / adet':'% / satış'}</div>
+   </div>
+   <input id="rule-${c.id}" type="number" step="0.01"
+   min="0" ${r.method==='percent'?'max="100"':''}
+   inputmode="decimal" value="${r.value}"
+   aria-label="${c.name} kâr kuralı">
+   <button class="btn ghost sm" data-action="saveRule"
+   data-id="${c.id}">Kaydet</button>
+  </div>`;
+ }).join("");
+
+ const old=db.transactions;
+ const oldTotal=type=>sum(
+  old.filter(x=>x.type===type),"amount"
+ );
+
+ $("legacySummary").innerHTML=`
+ <p class="muted">
+ V3 kayıt sayısı: ${old.length}
+ · Eski dükkan geliri: ${money(oldTotal('income'))}
+ · Eski dükkan gideri: ${money(oldTotal('shop'))}
+ · Eski şahsi gider: ${money(oldTotal('personal'))}
+ </p>`;
+
+ $("legacyHistory").innerHTML=old.slice(0,25).map(x=>`
+ <div class="entry">
+  <div class="line">
+   <div class="grow">
+    <b>${{
+     income:'Dükkan Gelir',
+     shop:'Dükkan Gider',
+     personal:'Şahsi Gider'
+    }[x.type]||'Eski işlem'}</b>
+    <div class="entry-meta">${esc(new Date(x.date).toLocaleString('tr-TR'))}</div>
+   </div>
+   <b>${money(x.amount)}</b>
+  </div>
+ </div>`).join("")
+ +(old.length>25
+ ?'<p class="muted">İlk 25 kayıt gösteriliyor. Tüm kayıtlar JSON yedeğinde korunuyor.</p>'
+ :'');
+}
+
+function render(){
+ renderQuick();
+ renderExpenses();
+ renderDebts();
+ renderReport();
+}
+
 function backup(){
- const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
- const url=URL.createObjectURL(blob),a=document.createElement("a");
+ const json=JSON.stringify(db,null,2);
+ const blob=new Blob([json],{type:'application/json'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
  a.href=url;
- a.download="VIZIR_Muhasebe_Yedek_"+localDate(new Date())+".json";
- document.body.appendChild(a);a.click();a.remove();
- setTimeout(()=>URL.revokeObjectURL(url),3000);
+ a.download=`VIZIR_Muhasebe_V4_Yedek_${dayKey()}.json`;
+ document.body.appendChild(a);
+ a.click();
+ a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),5000);
 }
-function restoreBackup(event){
+
+function restore(event){
  const file=event.target.files?.[0];
  if(!file)return;
  const reader=new FileReader();
+
  reader.onload=()=>{
- try{
- const data=JSON.parse(reader.result);
- if(!data||!Array.isArray(data.transactions)||!Array.isArray(data.debts))throw Error("Geçersiz dosya");
- if(!confirm("Mevcut kayıtlar yedekteki kayıtlarla değiştirilsin mi?"))return;
- db=data;loadError=false;save();
- alert("Yedek geri yüklendi.");
- }catch(e){alert("Geçerli VIZIR Muhasebe yedeği seç.");}
- event.target.value="";
+  try{
+   const input=JSON.parse(reader.result);
+
+   if(!input||typeof input!=='object'||
+   !Array.isArray(input.transactions)||
+   !Array.isArray(input.debts)){
+    throw Error('Geçersiz yedek');
+   }
+
+   if(input.v4&&(
+   !Array.isArray(input.v4.sales)||
+   !Array.isArray(input.v4.extras)||
+   !Array.isArray(input.v4.fixed))){
+    throw Error('Geçersiz V4 yedeği');
+   }
+
+   if(!confirm(
+    'Mevcut tüm kayıtlar seçilen yedekle DEĞİŞTİRİLECEK. Önce güncel yedeğini aldın mı?'
+   ))return;
+
+   if(readOnly){
+    alert('Eski kayıtlar okunamadığı için geri yükleme otomatik yapılmadı.');
+    return;
+   }
+
+   const before=JSON.stringify(db);
+
+   try{
+    if(!localStorage.getItem(SNAPSHOT)){
+     localStorage.setItem(
+      SNAPSHOT,
+      localStorage.getItem(KEY)||before
+     );
+    }
+    localStorage.setItem(KEY,JSON.stringify(input));
+    db=input;
+    render();
+    alert('Yedek başarıyla geri yüklendi.');
+   }catch(e){
+    alert('Geri yükleme başarısız.');
+   }
+  }catch(e){
+   alert('Dosya geçerli bir VIZIR Muhasebe yedeği değil.');
+  }finally{
+   event.target.value='';
+  }
  };
+
  reader.readAsText(file);
 }
-$("reportDate").value=localDate(new Date());
+
+// NAVİGASYON
+
+for(const button of document.querySelectorAll('nav button')){
+ button.addEventListener('click',()=>{
+  for(const b of document.querySelectorAll('nav button')){
+   b.classList.toggle('active',b===button);
+  }
+  for(const s of document.querySelectorAll('main>section')){
+   s.hidden=s.id!==button.dataset.tab;
+  }
+  render();
+ });
+}
+
+// SATIŞ OLAYLARI
+
+$('salesInputs').addEventListener('click',e=>{
+ const b=e.target.closest('[data-action="addSale"]');
+ if(b)addSale(b.closest('[data-category]'));
+});
+
+$('recentSales').addEventListener('click',e=>{
+ const b=e.target.closest('[data-action="voidSale"]');
+ if(b)voidSale(b.dataset.id);
+});
+
+// GİDER OLAYLARI
+
+$('addFixed').addEventListener('click',addFixed);
+$('addExtra').addEventListener('click',addExtra);
+
+$('fixedList').addEventListener('click',e=>{
+ const b=e.target.closest('button[data-action]');
+ if(!b)return;
+ if(b.dataset.action==='editFixed')editFixed(b.dataset.id);
+ if(b.dataset.action==='pauseFixed')pauseFixed(b.dataset.id);
+});
+
+$('extraList').addEventListener('click',e=>{
+ const b=e.target.closest('[data-action="voidExtra"]');
+ if(b)voidExtra(b.dataset.id);
+});
+
+$('expenseDate').addEventListener('change',renderExpenses);
+
+// BORÇ OLAYLARI
+
+$('debtDiscount').addEventListener('change',previewDiscount);
+$('debtAmount').addEventListener('input',previewDiscount);
+$('addDebt').addEventListener('click',newDebt);
+
+$('debtList').addEventListener('change',e=>{
+ if(e.target.classList.contains('debtDiscountToggle')){
+  debtToggleDiscount(
+   e.target.closest('[data-debt-id]').dataset.debtId
+  );
+ }
+});
+
+$('debtList').addEventListener('click',e=>{
+ const b=e.target.closest('button[data-action]');
+ if(!b)return;
+
+ const card=b.closest('[data-debt-id]');
+ const id=card?.dataset.debtId;
+ if(!id)return;
+
+ switch(b.dataset.action){
+  case 'debtPlus':
+   debtChange(id,1,card);
+   break;
+  case 'debtMinus':
+   debtChange(id,-1,card);
+   break;
+  case 'undoDebt':
+   debtUndo(id);
+   break;
+  case 'deleteDebt':
+   debtDelete(id);
+   break;
+  case 'historyDebt':
+   const panel=card.querySelector('.dHistory');
+   panel.hidden=!panel.hidden;
+   break;
+ }
+});
+
+// RAPOR OLAYLARI
+
+$('previousDay').addEventListener('click',()=>{
+ $('reportDate').value=dayShift($('reportDate').value,-1);
+ $('reportMonth').value=monthOf($('reportDate').value);
+ renderReport();
+});
+
+$('nextDay').addEventListener('click',()=>{
+ $('reportDate').value=dayShift($('reportDate').value,1);
+ $('reportMonth').value=monthOf($('reportDate').value);
+ renderReport();
+});
+
+$('reportDate').addEventListener('change',()=>{
+ $('reportMonth').value=monthOf($('reportDate').value);
+ renderReport();
+});
+
+$('reportMonth').addEventListener('change',renderReport);
+
+$('rulesList').addEventListener('click',e=>{
+ const b=e.target.closest('[data-action="saveRule"]');
+ if(b)saveRule(b.dataset.id);
+});
+
+$('backup').addEventListener('click',backup);
+$('restoreFile').addEventListener('change',restore);
+
+// İLK AÇILIŞ
+
+const today=dayKey();
+$('saleDate').value=today;
+$('expenseDate').value=today;
+$('reportDate').value=today;
+$('reportMonth').value=monthOf(today);
+
+salesInputTemplate();
 render();
+
 </script>
 </body>
 </html>
