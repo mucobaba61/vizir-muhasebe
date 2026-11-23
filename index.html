@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="VIZIR Muhasebe">
 <meta name="theme-color" content="#142743">
-<title>VIZIR Muhasebe V5.5</title>
+<title>VIZIR Muhasebe V5.6</title>
 <style>
 :root{--navy:#142743;--ink:#192b43;--sub:#667991;--bg:#f2f5f9;--line:#e1e8f0;--green:#07875e;--red:#c54050}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
@@ -41,7 +41,7 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 </style>
 </head>
 <body>
-<header><div class="head"><div><b>VIZIR MUHASEBE</b><small>Mini satış · Ciro · Kâr · Borç</small></div><span class="version">V5.5</span></div></header>
+<header><div class="head"><div><b>VIZIR MUHASEBE</b><small>Mini satış · Ciro · Kâr · Borç</small></div><span class="version">V5.6</span></div></header>
 <nav>
 <button class="active" data-tab="quick">Hızlı Satış</button>
 <button data-tab="finance">Muhasebe</button>
@@ -71,10 +71,9 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 <div class="card"><h2>Ciro ve Kâr Raporu</h2><div class="grid2" style="margin-bottom:9px"><div><label>Dönem</label><select id="reportPeriod"><option value="day">Günlük</option><option value="week">Son 7 gün</option><option value="month" selected>Aylık</option><option value="custom">Tarih aralığı</option></select></div><div><label>Referans tarih</label><input type="date" id="reportAnchor"></div></div>
 <div class="dateNav" style="margin-bottom:9px"><button id="reportPrev">‹</button><div class="note" id="rangeLabel" style="text-align:center">Dönem</div><button id="reportNext">›</button></div>
 <div class="grid2" id="customRange" hidden><div><label>Başlangıç</label><input type="date" id="rangeStart"></div><div><label>Bitiş</label><input type="date" id="rangeEnd"></div></div></div>
-<div class="card"><h2>Gün Gün Ciro ve Kâr</h2>
-<div class="sub" style="margin-bottom:8px">Seçilen dönemde her günün cirosu ve kârı</div>
-<div class="day-report-head"><span>Tarih</span><span class="right">Ciro</span><span class="right">Kâr</span></div>
-<div id="dailyCiroRows"></div><p class="tiny" id="dailyCiroMore" hidden></p></div>
+<div class="card"><h2>Günlük Ciro ve Kâr</h2>
+<div class="dateNav" style="margin-bottom:12px"><button id="dailyCiroPrev" aria-label="Önceki gün">‹</button><input id="dailyCiroDay" type="date" aria-label="Günlük ciro tarihi"><button id="dailyCiroNext" aria-label="Sonraki gün">›</button></div>
+<div class="grid2"><div class="note"><span class="sub">GÜNLÜK CİRO</span><div class="kpi green" id="dailyCiroAmount">0 ₺</div></div><div class="note"><span class="sub">GÜNLÜK KÂR</span><div class="kpi" id="dailyCiroProfit">0 ₺</div></div></div></div>
 <details class="card" id="financeLayoutSettings"><summary><b>⚙ Bilgi Kutucuklarını Düzenle</b></summary><p class="sub">İstemediğin kutucuğu kaldırabilir, istediğin sıraya taşıyabilirsin. Kaldırılan kutucuk yeniden gösterilebilir; hesaplar ve kayıtlar silinmez.</p><div id="financeLayoutRows"></div><button class="btn soft small" id="financeLayoutReset" style="width:100%;margin-top:9px">Tüm Kutucukları Göster ve Sıralamayı Sıfırla</button></details>
 <div class="grid2 stats" id="financeStatGrid">
 <div class="card"><div class="sub">TOPLAM CİRO</div><div class="kpi green" id="rSales">0 ₺</div></div>
@@ -228,22 +227,16 @@ function renderFinance(){const range=period(),s=rangeStats(range);$("customRange
  $("rTarget").textContent=fixedPerDay<=0?money(0):usableMargin>0?money(fixedPerDay/usableMargin):"Kâr marjı verisi gerekli";
  const grouped=new Map();for(const r of v5Sales(range))for(const x of r.items){const key=String(x.productId||x.name),g=grouped.get(key)||{name:x.name,qty:0,revenue:0,profit:0};g.qty+=Number(x.qty);g.revenue+=x.qty*x.price;g.profit+=x.qty*unitProfit(x)-(r.payment==="card"?round(x.qty*x.price*.03):0);grouped.set(key,g)}
  $("productReport").innerHTML=[...grouped.values()].sort((a,b)=>b.qty-a.qty).map(x=>`<div class="reportRow"><b>${esc(x.name)}</b><span class="right">${x.qty}</span><span class="right">${money(x.revenue)}</span><span class="right green">${money(x.profit)}</span></div>`).join("")||'<div class="empty">Bu dönemde V5 ürün satışı yok.</div>';
- renderDailyCiro(range);
+ renderDailyCiro();
  renderProductDay();
  const thisMonth=monthOf(dayKey());$("fixedRows").innerHTML=old().fixed.filter(x=>x.startMonth<=thisMonth&&(!x.endMonth||x.endMonth>=thisMonth)).map(x=>`<div class="entry"><div class="row"><div class="grow"><b>${esc(x.name)}</b><div class="sub">${money(x.amount)}/ay ${x.endMonth?"· Ay sonunda duracak":""}</div></div><button class="btn soft small" data-fix-edit="${esc(x.id)}">Düzenle</button><button class="btn soft small" data-fix-stop="${esc(x.id)}" ${x.endMonth?"disabled":""}>Durdur</button></div></div>`).join("")||'<div class="empty">Sabit gider eklenmemiş.</div>';
  $("extraSummary").textContent="Seçilen gider günü: "+showDay($("expenseDay").value)+" · "+money(sum(extras({start:$("expenseDay").value,end:$("expenseDay").value}),"amount"));
  setMoney("totalDebt",sum(db.debts,"remaining"));renderDebts()}
-function renderDailyCiro(range){
- const dates=[];let d=range.end;
- // Maximum one year on screen; older dates remain available via period selection.
- while(d>=range.start&&dates.length<366){dates.push(d);d=dayAdd(d,-1)}
- $("dailyCiroRows").innerHTML=dates.map(day=>{
-  const s=rangeStats({start:day,end:day});
-  const earned=round(s.profit-s.fee);
-  return `<div class="day-report-row"><b>${showDay(day)}</b><span class="right">${money(s.revenue)}</span><span class="right ${earned<0?"redtext":"green"}">${money(earned)}</span></div>`;
- }).join("")||'<div class="empty">Bu dönemde gün bulunmuyor.</div>';
- const note=$("dailyCiroMore");note.hidden=!(d>=range.start);
- note.textContent=note.hidden?"":"Son 366 gün gösteriliyor. Daha eski günler için tarih aralığını değiştir.";
+function renderDailyCiro(){
+ const day=$("dailyCiroDay").value||dayKey();
+ const s=rangeStats({start:day,end:day});
+ setMoney("dailyCiroAmount",s.revenue);
+ setNet("dailyCiroProfit",round(s.profit-s.fee));
 }
 function renderProductDay(){
  const day=$("productDay").value||dayKey();
@@ -448,6 +441,9 @@ $("rangeStart").addEventListener("change",renderFinance);
 $("rangeEnd").addEventListener("change",renderFinance);
 $("reportPrev").addEventListener("click",()=>shiftReport(-1));
 $("reportNext").addEventListener("click",()=>shiftReport(1));
+$("dailyCiroPrev").addEventListener("click",()=>{$("dailyCiroDay").value=dayAdd($("dailyCiroDay").value,-1);renderDailyCiro()});
+$("dailyCiroNext").addEventListener("click",()=>{$("dailyCiroDay").value=dayAdd($("dailyCiroDay").value,1);renderDailyCiro()});
+$("dailyCiroDay").addEventListener("change",renderDailyCiro);
 $("fixedAdd").addEventListener("click",addFixed);
 $("fixedRows").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.fixEdit)editFixed(b.dataset.fixEdit);if(b.dataset.fixStop)stopFixed(b.dataset.fixStop)});
 $("expenseAdd").addEventListener("click",addExpense);
@@ -501,7 +497,7 @@ $("restoreFile").addEventListener("change",restoreBackup);
 // INIT
 const TODAY=dayKey();
 $("reportAnchor").value=TODAY;$("rangeStart").value=monthOf(TODAY)+"-01";$("rangeEnd").value=TODAY;
-$("expenseDay").value=TODAY;$("txDay").value=TODAY;$("productDay").value=TODAY;
+$("expenseDay").value=TODAY;$("txDay").value=TODAY;$("productDay").value=TODAY;$("dailyCiroDay").value=TODAY;
 refresh();
 </script>
 </body>
