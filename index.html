@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="VIZIR Muhasebe">
 <meta name="theme-color" content="#142743">
-<title>VIZIR Muhasebe V5.6</title>
+<title>VIZIR Muhasebe V5.7</title>
 <style>
 :root{--navy:#142743;--ink:#192b43;--sub:#667991;--bg:#f2f5f9;--line:#e1e8f0;--green:#07875e;--red:#c54050}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
@@ -41,7 +41,7 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 </style>
 </head>
 <body>
-<header><div class="head"><div><b>VIZIR MUHASEBE</b><small>Mini satış · Ciro · Kâr · Borç</small></div><span class="version">V5.6</span></div></header>
+<header><div class="head"><div><b>VIZIR MUHASEBE</b><small>Mini satış · Ciro · Kâr · Borç</small></div><span class="version">V5.7</span></div></header>
 <nav>
 <button class="active" data-tab="quick">Hızlı Satış</button>
 <button data-tab="finance">Muhasebe</button>
@@ -68,7 +68,7 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 </div>
 </section>
 <section id="finance" hidden>
-<div class="card"><h2>Ciro ve Kâr Raporu</h2><div class="grid2" style="margin-bottom:9px"><div><label>Dönem</label><select id="reportPeriod"><option value="day">Günlük</option><option value="week">Son 7 gün</option><option value="month" selected>Aylık</option><option value="custom">Tarih aralığı</option></select></div><div><label>Referans tarih</label><input type="date" id="reportAnchor"></div></div>
+<div class="card" style="display:none" aria-hidden="true"><h2>Ciro ve Kâr Raporu</h2><div class="grid2" style="margin-bottom:9px"><div><label>Dönem</label><select id="reportPeriod"><option value="day">Günlük</option><option value="week">Son 7 gün</option><option value="month" selected>Aylık</option><option value="custom">Tarih aralığı</option></select></div><div><label>Referans tarih</label><input type="date" id="reportAnchor"></div></div>
 <div class="dateNav" style="margin-bottom:9px"><button id="reportPrev">‹</button><div class="note" id="rangeLabel" style="text-align:center">Dönem</div><button id="reportNext">›</button></div>
 <div class="grid2" id="customRange" hidden><div><label>Başlangıç</label><input type="date" id="rangeStart"></div><div><label>Bitiş</label><input type="date" id="rangeEnd"></div></div></div>
 <div class="card"><h2>Günlük Ciro ve Kâr</h2>
