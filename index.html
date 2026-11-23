@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="VIZIR Muhasebe">
 <meta name="theme-color" content="#142743">
-<title>VIZIR Muhasebe V5.3</title>
+<title>VIZIR Muhasebe V5.4</title>
 <style>
 :root{--navy:#142743;--ink:#192b43;--sub:#667991;--bg:#f2f5f9;--line:#e1e8f0;--green:#07875e;--red:#c54050}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
@@ -35,12 +35,12 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 .reportRow{display:grid;grid-template-columns:minmax(86px,1fr) 38px minmax(70px,.8fr) minmax(70px,.8fr);gap:5px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:12px}.reportRow:last-child{border:0}.reportRow.headrow{color:var(--sub);font-size:10px;font-weight:700}.right{text-align:right}.reportRow b{overflow-wrap:anywhere}
 .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.actions .btn{flex:1}
 .category-input{display:grid;grid-template-columns:1fr 1fr;gap:8px}.line-edit{display:grid;grid-template-columns:minmax(85px,1fr) 70px 100px 37px;gap:5px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.line-edit input{padding:9px 5px}
-.rule-box{background:#f7f9fc;border:1px solid var(--line);padding:10px;border-radius:9px}.feeCompact{padding:7px 10px!important;min-height:auto!important;align-self:start}.feeCompact .kpi{font-size:15px;margin-top:2px}.feeCompact .sub{font-size:10px}.line{border-top:1px solid var(--line);margin:10px 0}.empty{text-align:center;padding:15px;color:var(--sub);font-size:12px}
+.rule-box{background:#f7f9fc;border:1px solid var(--line);padding:10px;border-radius:9px}.finance-layout-row{display:grid;grid-template-columns:minmax(100px,1fr) auto auto auto;gap:5px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.finance-layout-row:last-child{border-bottom:0}.finance-layout-row .btn{min-height:34px;padding:6px 9px;font-size:12px}.finance-layout-row .btn.reveal{background:#e4f5ec;color:#086b4b}.finance-layout-row .hidden-label{color:var(--sub);font-size:11px}.feeCompact{padding:7px 10px!important;min-height:auto!important;align-self:start}.feeCompact .kpi{font-size:15px;margin-top:2px}.feeCompact .sub{font-size:10px}.line{border-top:1px solid var(--line);margin:10px 0}.empty{text-align:center;padding:15px;color:var(--sub);font-size:12px}
 @media(max-width:380px){nav button{font-size:10px}.kpi{font-size:18px}.reportRow{font-size:11px;grid-template-columns:minmax(72px,1fr) 32px minmax(66px,.85fr) minmax(66px,.85fr)}.line-edit{grid-template-columns:minmax(75px,1fr) 55px 80px 31px;gap:3px}.line-edit input{font-size:14px} .card{padding:10px}}
 </style>
 </head>
 <body>
-<header><div class="head"><div><b>VIZIR MUHASEBE</b><small>Mini satış · Ciro · Kâr · Borç</small></div><span class="version">V5.3</span></div></header>
+<header><div class="head"><div><b>VIZIR MUHASEBE</b><small>Mini satış · Ciro · Kâr · Borç</small></div><span class="version">V5.4</span></div></header>
 <nav>
 <button class="active" data-tab="quick">Hızlı Satış</button>
 <button data-tab="finance">Muhasebe</button>
@@ -70,7 +70,8 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 <div class="card"><h2>Ciro ve Kâr Raporu</h2><div class="grid2" style="margin-bottom:9px"><div><label>Dönem</label><select id="reportPeriod"><option value="day">Günlük</option><option value="week">Son 7 gün</option><option value="month" selected>Aylık</option><option value="custom">Tarih aralığı</option></select></div><div><label>Referans tarih</label><input type="date" id="reportAnchor"></div></div>
 <div class="dateNav" style="margin-bottom:9px"><button id="reportPrev">‹</button><div class="note" id="rangeLabel" style="text-align:center">Dönem</div><button id="reportNext">›</button></div>
 <div class="grid2" id="customRange" hidden><div><label>Başlangıç</label><input type="date" id="rangeStart"></div><div><label>Bitiş</label><input type="date" id="rangeEnd"></div></div></div>
-<div class="grid2 stats">
+<details class="card" id="financeLayoutSettings"><summary><b>⚙ Bilgi Kutucuklarını Düzenle</b></summary><p class="sub">İstemediğin kutucuğu kaldırabilir, istediğin sıraya taşıyabilirsin. Kaldırılan kutucuk yeniden gösterilebilir; hesaplar ve kayıtlar silinmez.</p><div id="financeLayoutRows"></div><button class="btn soft small" id="financeLayoutReset" style="width:100%;margin-top:9px">Tüm Kutucukları Göster ve Sıralamayı Sıfırla</button></details>
+<div class="grid2 stats" id="financeStatGrid">
 <div class="card"><div class="sub">TOPLAM CİRO</div><div class="kpi green" id="rSales">0 ₺</div></div>
 <div class="card"><div class="sub">ÜRÜNLERDEN KÂR (KESİNTİ ÖNCESİ)</div><div class="kpi" id="rGross">0 ₺</div></div>
 <div class="card"><div class="sub">SABİT GİDER PAYI</div><div class="kpi" id="rFixed">0 ₺</div><div class="sub" style="margin-top:6px">Günlük sabit gideri karşılayan tahmini ciro</div><b id="rTarget">—</b><div class="tiny">Seçili dönemin banka kesintisi sonrası ürün kâr marjına göre</div></div>
@@ -110,7 +111,7 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 <div class="note" id="pPreview">Kâr önizlemesi</div><div class="row"><button class="btn good grow" id="productSave">Ürünü Kaydet</button><button class="btn soft" id="productClear">Temizle</button></div>
 </div></div>
 <div class="card"><h2>Ürünlerim</h2><p class="sub">Silinen ürünler satış ekranından kaldırılır; eski satış kayıtları ve raporlar korunur.</p><div id="allProducts"></div></div>
-<div class="card"><h2>Kategoriler</h2><p class="sub">Kategoriyi silersen satış ekranından gizlenir. İçindeki ürünler ve geçmiş satışlar silinmez; kategoriyi geri getirebilirsin.</p><div id="categoriesSettings"></div><div class="line"></div><h3>Yeni Kategori Ekle</h3><div class="row"><input id="categoryName" placeholder="Kategori adı" maxlength="36"><button class="btn good" id="categoryAdd">Ekle</button></div></div>
+<div class="card"><h2>Kategoriler</h2><p class="sub">Kategori adını Düzenle ile değiştirebilirsin. Kategoriyi silersen satış ekranından gizlenir. İçindeki ürünler ve geçmiş satışlar silinmez; kategoriyi geri getirebilirsin.</p><div id="categoriesSettings"></div><div class="line"></div><h3>Yeni Kategori Ekle</h3><div class="row"><input id="categoryName" placeholder="Kategori adı" maxlength="36"><button class="btn good" id="categoryAdd">Ekle</button></div></div>
 <div class="card"><h2>Yedekleme ve Verileri Koruma</h2><button class="btn good" id="downloadBackup" style="width:100%">Tüm Verileri JSON Yedekle</button><label style="margin-top:12px">Yedekten geri yükle</label><input id="restoreFile" type="file" accept=".json,application/json"><p class="note">Yedek almadan uygulamayı silme veya Safari verilerini temizleme. Geri yükleme mevcut kayıtların yerine geçer.</p></div>
 <details class="card"><summary><b>V3 Eski Kayıtlar (Arşiv)</b></summary><p class="sub">Eski gelir kayıtları toplam ciroya dahildir. Eski gider ve şahsi gider kayıtları yalnızca arşivde saklanır.</p><div id="legacyArchive"></div></details>
 </section>
@@ -311,9 +312,9 @@ function renderSettings(){const selected=prodEditing?product(prodEditing):null;
  $("allProducts").innerHTML=cats().map(c=>{const ps=products().filter(p=>p.category===c.id&&!p.deleted);if(!ps.length)return "";return `<h3>${esc(c.name)}</h3>`+ps.map(p=>`<div class="entry row"><div class="grow"><b>${esc(p.name)}</b><div class="sub">${money(p.price)} · ${p.method==="cost"?"Maliyet "+money(p.value):p.method==="fixed"?"Sabit kâr "+money(p.value)+"/adet":"Kâr %"+p.value} ${p.active?"":"· Gizli / Silinmiş"}</div></div><button class="btn soft small" data-product-delete="${esc(p.id)}">Sil</button><button class="btn soft small" data-product-edit="${esc(p.id)}">Düzenle</button><button class="btn soft small" data-product-toggle="${esc(p.id)}">${p.active?"Gizle":"Göster"}</button></div>`).join("")}).join("")||'<div class="empty">Ürün bulunmuyor.</div>';
  $("categoriesSettings").innerHTML=cats().map(c=>{
   const count=products().filter(p=>p.category===c.id&&!p.deleted).length;
-  return `<div class="entry row"><div class="grow"><b>${esc(c.name)}</b><div class="sub">${count} kayıtlı ürün${c.deleted?" · Silindi / gizli":""}</div></div><button class="btn soft small" data-category-toggle="${esc(c.id)}">${c.deleted?"Geri Getir":"Sil"}</button></div>`;
+  return `<div class="entry row"><div class="grow"><b>${esc(c.name)}</b><div class="sub">${count} kayıtlı ürün${c.deleted?" · Silindi / gizli":""}</div></div><button class="btn soft small" data-category-rename="${esc(c.id)}">Düzenle</button><button class="btn soft small" data-category-toggle="${esc(c.id)}">${c.deleted?"Geri Getir":"Sil"}</button></div>`;
  }).join("");
- updateProductPreview();renderArchive()}
+ updateProductPreview();renderArchive();renderFinanceLayout()}
 function fillProduct(p){prodEditing=p.id;$("pName").dataset.forId=String(p.id);$("pName").value=p.name;$("pCategory").value=p.category;$("pPrice").value=p.price;$("pMethod").value=p.method;$("pValue").value=p.value;updateProductPreview()}
 function clearProduct(){prodEditing=null;delete $("pName").dataset.forId;$("pName").value="";$("pPrice").value="";$("pMethod").value="cost";$("pValue").value="";updateProductPreview()}
 function updateProductPreview(){const method=$("pMethod").value,price=num($("pPrice").value),value=num($("pValue").value);$("pValueLabel").textContent=method==="cost"?"Ürün maliyeti (₺)":method==="fixed"?"Sabit kâr (₺ / adet)":"Satıştan kâr yüzdesi (%)";$("pPreview").textContent=Number.isFinite(price)&&Number.isFinite(value)&&price>=0&&value>=0?"Normal satışta kâr: "+money(unitProfit({method,price,value})):"Fiyat ve kâr bilgisini gir."}
@@ -328,7 +329,58 @@ function toggleCategory(catId){
  if(c.deleted&&String(prodEditing)&&product(prodEditing)?.category===catId)clearProduct();
  renderShop();
 }
+function renameCategory(catId){
+ const c=cats().find(x=>String(x.id)===String(catId));if(!c)return;
+ const answer=prompt("Kategori için yeni ad:",c.name);if(answer===null)return;
+ const name=answer.trim();if(!name||name.length>36)return alert("Kategori adı 1–36 karakter olmalı.");
+ if(cats().some(x=>String(x.id)!==String(c.id)&&x.name.trim().toLocaleLowerCase("tr-TR")===name.toLocaleLowerCase("tr-TR")))return alert("Bu isimde başka kategori zaten bulunuyor.");
+ if(name===c.name)return;
+ save(()=>{c.name=name});renderShop();
+}
 function addCategory(){const name=$("categoryName").value.trim();if(!name)return alert("Kategori adını yaz.");if(cats().some(c=>c.name.toLocaleLowerCase("tr-TR")===name.toLocaleLowerCase("tr-TR")))return alert("Bu kategori zaten var. Silinmişse geri yükleyebilirsin.");if(save(()=>cats().push({id:"cat-"+id(),name}))){$("categoryName").value=""}}
+const FINANCE_CARDS=[
+ {id:"rSales",label:"Toplam Ciro"},
+ {id:"rGross",label:"Ürünlerden Kâr"},
+ {id:"rFixed",label:"Sabit Gider Payı ve Gerekli Ciro"},
+ {id:"rFee",label:"Kart Komisyonu"},
+ {id:"rExtra",label:"Ekstra Gider"},
+ {id:"rNet",label:"Tahmini Net Kâr"},
+ {id:"rAverage",label:"Ortalama Günlük Ciro"}
+];
+function financeLayout(){
+ const v=current();if(!v.financeLayout||typeof v.financeLayout!=="object")v.financeLayout={order:[],hidden:[]};
+ if(!Array.isArray(v.financeLayout.order))v.financeLayout.order=[];
+ if(!Array.isArray(v.financeLayout.hidden))v.financeLayout.hidden=[];
+ const ids=FINANCE_CARDS.map(x=>x.id);
+ v.financeLayout.order=[...new Set(v.financeLayout.order.filter(x=>ids.includes(x))),...ids.filter(x=>!v.financeLayout.order.includes(x))];
+ v.financeLayout.hidden=[...new Set(v.financeLayout.hidden.filter(x=>ids.includes(x)))];
+ return v.financeLayout;
+}
+function renderFinanceLayout(){
+ const l=financeLayout(),grid=$("financeStatGrid");
+ const names=Object.fromEntries(FINANCE_CARDS.map(x=>[x.id,x.label]));
+ for(const ident of l.order){
+  const node=$(ident)?.closest(".card");
+  if(!node||node.parentElement!==grid)continue;
+  grid.appendChild(node);
+  node.hidden=l.hidden.includes(ident);
+ }
+ $("financeLayoutRows").innerHTML=l.order.map((ident,i)=>`<div class="finance-layout-row">
+ <div><b>${esc(names[ident])}</b>${l.hidden.includes(ident)?'<div class="hidden-label">Gizli</div>':''}</div>
+ <button class="btn soft" data-finance-move="${ident}" data-dir="-1" ${i===0?'disabled':''} aria-label="Yukarı taşı">↑</button>
+ <button class="btn soft" data-finance-move="${ident}" data-dir="1" ${i===l.order.length-1?'disabled':''} aria-label="Aşağı taşı">↓</button>
+ <button class="btn ${l.hidden.includes(ident)?'reveal':'soft'}" data-finance-toggle="${ident}">${l.hidden.includes(ident)?'Göster':'Sil'}</button>
+ </div>`).join("");
+}
+function moveFinanceCard(ident,dir){
+ const layout=financeLayout(),i=layout.order.indexOf(ident),next=i+Number(dir);
+ if(i<0||next<0||next>=layout.order.length)return;
+ save(()=>{[layout.order[i],layout.order[next]]=[layout.order[next],layout.order[i]]});
+}
+function toggleFinanceCard(ident){
+ if(!FINANCE_CARDS.some(x=>x.id===ident))return;
+ const layout=financeLayout();save(()=>{layout.hidden=layout.hidden.includes(ident)?layout.hidden.filter(x=>x!==ident):[...layout.hidden,ident]});
+}
 function renderArchive(){
  const arr=db.transactions||[],types={income:"Dükkan Geliri",shop:"Dükkan Gideri",personal:"Şahsi Gider"};
  $("legacyArchive").innerHTML=`<p class="sub">Toplam ${arr.length} eski işlem. Eski gelir: ${money(sum(arr.filter(x=>x.type==="income"),"amount"))}. Dükkan gideri: ${money(sum(arr.filter(x=>x.type==="shop"),"amount"))}. Şahsi gider: ${money(sum(arr.filter(x=>x.type==="personal"),"amount"))}.</p>`+
@@ -413,7 +465,18 @@ $("allProducts").addEventListener("click",e=>{
  const toggle=e.target.closest("[data-product-toggle]");if(toggle){const p=product(toggle.dataset.productToggle);if(p)save(()=>p.active=!p.active)}
 });
 $("categoryAdd").addEventListener("click",addCategory);
-$("categoriesSettings").addEventListener("click",e=>{const b=e.target.closest("[data-category-toggle]");if(b)toggleCategory(b.dataset.categoryToggle)});
+$("categoriesSettings").addEventListener("click",e=>{
+ const ren=e.target.closest("[data-category-rename]");if(ren){renameCategory(ren.dataset.categoryRename);return}
+ const b=e.target.closest("[data-category-toggle]");if(b)toggleCategory(b.dataset.categoryToggle)
+});
+$("financeLayoutRows").addEventListener("click",e=>{
+ const moving=e.target.closest("[data-finance-move]");if(moving){moveFinanceCard(moving.dataset.financeMove,moving.dataset.dir);return}
+ const toggling=e.target.closest("[data-finance-toggle]");if(toggling)toggleFinanceCard(toggling.dataset.financeToggle)
+});
+$("financeLayoutReset").addEventListener("click",()=>{
+ if(!confirm("Bütün muhasebe kutucukları gösterilsin ve ilk sıralamaya dönülsün mü?"))return;
+ save(()=>{current().financeLayout={order:FINANCE_CARDS.map(x=>x.id),hidden:[]}})
+});
 $("productDayPrev").addEventListener("click",()=>{$("productDay").value=dayAdd($("productDay").value,-1);renderProductDay()});
 $("productDayNext").addEventListener("click",()=>{$("productDay").value=dayAdd($("productDay").value,1);renderProductDay()});
 $("productDay").addEventListener("change",renderProductDay);
