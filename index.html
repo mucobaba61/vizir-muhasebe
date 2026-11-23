@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="VIZIR Muhasebe">
 <meta name="theme-color" content="#142743">
-<title>VIZIR Muhasebe V5.4</title>
+<title>VIZIR Muhasebe V5.5</title>
 <style>
 :root{--navy:#142743;--ink:#192b43;--sub:#667991;--bg:#f2f5f9;--line:#e1e8f0;--green:#07875e;--red:#c54050}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
@@ -36,11 +36,12 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.actions .btn{flex:1}
 .category-input{display:grid;grid-template-columns:1fr 1fr;gap:8px}.line-edit{display:grid;grid-template-columns:minmax(85px,1fr) 70px 100px 37px;gap:5px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.line-edit input{padding:9px 5px}
 .rule-box{background:#f7f9fc;border:1px solid var(--line);padding:10px;border-radius:9px}.finance-layout-row{display:grid;grid-template-columns:minmax(100px,1fr) auto auto auto;gap:5px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.finance-layout-row:last-child{border-bottom:0}.finance-layout-row .btn{min-height:34px;padding:6px 9px;font-size:12px}.finance-layout-row .btn.reveal{background:#e4f5ec;color:#086b4b}.finance-layout-row .hidden-label{color:var(--sub);font-size:11px}.feeCompact{padding:7px 10px!important;min-height:auto!important;align-self:start}.feeCompact .kpi{font-size:15px;margin-top:2px}.feeCompact .sub{font-size:10px}.line{border-top:1px solid var(--line);margin:10px 0}.empty{text-align:center;padding:15px;color:var(--sub);font-size:12px}
+.day-report-head,.day-report-row{display:grid;grid-template-columns:minmax(86px,1fr) minmax(83px,1fr) minmax(83px,1fr);gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:12px}.day-report-head{font-size:11px;color:var(--sub);font-weight:750}.day-report-row:last-child{border-bottom:0}.day-report-row .right{font-variant-numeric:tabular-nums}
 @media(max-width:380px){nav button{font-size:10px}.kpi{font-size:18px}.reportRow{font-size:11px;grid-template-columns:minmax(72px,1fr) 32px minmax(66px,.85fr) minmax(66px,.85fr)}.line-edit{grid-template-columns:minmax(75px,1fr) 55px 80px 31px;gap:3px}.line-edit input{font-size:14px} .card{padding:10px}}
 </style>
 </head>
 <body>
-<header><div class="head"><div><b>VIZIR MUHASEBE</b><small>Mini satış · Ciro · Kâr · Borç</small></div><span class="version">V5.4</span></div></header>
+<header><div class="head"><div><b>VIZIR MUHASEBE</b><small>Mini satış · Ciro · Kâr · Borç</small></div><span class="version">V5.5</span></div></header>
 <nav>
 <button class="active" data-tab="quick">Hızlı Satış</button>
 <button data-tab="finance">Muhasebe</button>
@@ -51,7 +52,7 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 <section id="quick">
 <div class="grid2 stats">
  <div class="card" style="background:#e7f6ee"><div class="sub">BUGÜNKÜ CİRO</div><div class="kpi green" id="todaySales">0 ₺</div></div>
- <div class="card"><div class="sub">BUGÜNKÜ KÂR (BANKA SONRASI)</div><div class="kpi" id="todayProfit">0 ₺</div></div>
+ <div class="card"><div class="sub">BUGÜNKÜ KÂR</div><div class="kpi" id="todayProfit">0 ₺</div></div>
 </div>
 <div class="card"><h2>1 · Kategori Seç</h2><div class="grid3" id="categoriesQuick"></div></div>
 <div class="card"><div class="row between"><h2 id="productTitle">2 · Ürün Seç</h2><span class="tiny">Tek dokunuşla seç</span></div><div class="grid3" id="productsQuick"></div><div id="selection" class="picked" hidden>
@@ -61,7 +62,7 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 <button class="btn good" id="addCart" style="width:100%">Sepete Ekle</button>
 </div></div>
 <div class="card"><div class="row between"><h2>3 · Satış Sepeti</h2><span id="cartCount" class="tag">0 ürün</span></div><div id="cartRows" class="empty">Henüz ürün seçilmedi.</div>
-<div class="line"></div><div class="row between"><b>TOPLAM</b><div class="kpi" id="cartTotal">0 ₺</div></div><div class="row between" style="margin:6px 0 11px"><span class="sub">Kâr (kart kesintisi sonrası)</span><b id="cartProfit">0 ₺</b></div>
+<div class="line"></div><div class="row between"><b>TOPLAM</b><div class="kpi" id="cartTotal">0 ₺</div></div><div class="row between" style="margin:6px 0 11px"><span class="sub">Kâr</span><b id="cartProfit">0 ₺</b></div>
 <label>4 · Ödeme Yöntemi</label><div class="grid2" style="margin:6px 0 12px"><button class="pay active" data-payment="cash">💵 Nakit</button><button class="pay" data-payment="card">💳 Kart</button></div>
 <button class="btn good" id="completeSale" style="width:100%">✓ Satışı Tamamla</button>
 </div>
@@ -70,27 +71,31 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 <div class="card"><h2>Ciro ve Kâr Raporu</h2><div class="grid2" style="margin-bottom:9px"><div><label>Dönem</label><select id="reportPeriod"><option value="day">Günlük</option><option value="week">Son 7 gün</option><option value="month" selected>Aylık</option><option value="custom">Tarih aralığı</option></select></div><div><label>Referans tarih</label><input type="date" id="reportAnchor"></div></div>
 <div class="dateNav" style="margin-bottom:9px"><button id="reportPrev">‹</button><div class="note" id="rangeLabel" style="text-align:center">Dönem</div><button id="reportNext">›</button></div>
 <div class="grid2" id="customRange" hidden><div><label>Başlangıç</label><input type="date" id="rangeStart"></div><div><label>Bitiş</label><input type="date" id="rangeEnd"></div></div></div>
+<div class="card"><h2>Gün Gün Ciro ve Kâr</h2>
+<div class="sub" style="margin-bottom:8px">Seçilen dönemde her günün cirosu ve kârı</div>
+<div class="day-report-head"><span>Tarih</span><span class="right">Ciro</span><span class="right">Kâr</span></div>
+<div id="dailyCiroRows"></div><p class="tiny" id="dailyCiroMore" hidden></p></div>
 <details class="card" id="financeLayoutSettings"><summary><b>⚙ Bilgi Kutucuklarını Düzenle</b></summary><p class="sub">İstemediğin kutucuğu kaldırabilir, istediğin sıraya taşıyabilirsin. Kaldırılan kutucuk yeniden gösterilebilir; hesaplar ve kayıtlar silinmez.</p><div id="financeLayoutRows"></div><button class="btn soft small" id="financeLayoutReset" style="width:100%;margin-top:9px">Tüm Kutucukları Göster ve Sıralamayı Sıfırla</button></details>
 <div class="grid2 stats" id="financeStatGrid">
 <div class="card"><div class="sub">TOPLAM CİRO</div><div class="kpi green" id="rSales">0 ₺</div></div>
-<div class="card"><div class="sub">ÜRÜNLERDEN KÂR (KESİNTİ ÖNCESİ)</div><div class="kpi" id="rGross">0 ₺</div></div>
-<div class="card"><div class="sub">SABİT GİDER PAYI</div><div class="kpi" id="rFixed">0 ₺</div><div class="sub" style="margin-top:6px">Günlük sabit gideri karşılayan tahmini ciro</div><b id="rTarget">—</b><div class="tiny">Seçili dönemin banka kesintisi sonrası ürün kâr marjına göre</div></div>
+<div class="card"><div class="sub">ÜRÜNLERDEN KÂR</div><div class="kpi" id="rGross">0 ₺</div></div>
+<div class="card"><div class="sub">SABİT GİDER PAYI</div><div class="kpi" id="rFixed">0 ₺</div><div class="sub" style="margin-top:6px">Günlük sabit gideri karşılayan tahmini ciro</div><b id="rTarget">—</b></div>
 <div class="card feeCompact"><div class="sub">KART KOMİSYONU (%3)</div><div class="kpi redtext" id="rFee">0 ₺</div></div>
 <div class="card"><div class="sub">EKSTRA GİDER</div><div class="kpi" id="rExtra">0 ₺</div></div>
 <div class="card"><div class="sub">TAHMİNİ NET KÂR</div><div class="kpi" id="rNet">0 ₺</div></div>
 <div class="card"><div class="sub">SATIŞ OLAN GÜN ORT. CİRO</div><div class="kpi" id="rAverage">0 ₺</div></div>
 </div>
-<div class="card"><div class="note">Kartla alınan V5 satışlarında brüt ürün kârından satış tutarının %3’ü banka komisyonu düşülür. Eski ödeme türü belirsiz kayıtlarda komisyon tahmin edilmez.</div></div>
-<div class="card"><h2>Ödeme Türüne Göre Ciro</h2><div class="grid3"><div><div class="sub">💵 Nakit</div><b id="rCash">0 ₺</b></div><div><div class="sub">💳 Kart</div><b id="rCard">0 ₺</b></div><div><div class="sub">Eski / Belirsiz</div><b id="rUnknown">0 ₺</b></div></div><p class="sub">V3 ve V4 eski satışlarda ödeme yöntemi bilinmediği için ayrı gösterilir.</p></div>
-<div class="card"><div class="sub">ESKİ CİRO</div><div class="kpi" id="rOldRevenue">0 ₺</div></div>
-<div class="card"><h2>Ürün Bazında Satış Raporu</h2><p class="sub">Seçili dönem toplamı</p><div class="reportRow headrow"><span>Ürün</span><span class="right">Adet</span><span class="right">Ciro</span><span class="right">Kâr</span></div><div id="productReport"></div><div id="legacyReport"></div>
+
+<div class="card"><h2>Ödeme Türüne Göre Ciro</h2><div class="grid3"><div><div class="sub">💵 Nakit</div><b id="rCash">0 ₺</b></div><div><div class="sub">💳 Kart</div><b id="rCard">0 ₺</b></div><div><div class="sub">Diğer</div><b id="rUnknown">0 ₺</b></div></div></div>
+
+<div class="card"><h2>Ürün Bazında Satış Raporu</h2><p class="sub">Seçili dönem toplamı</p><div class="reportRow headrow"><span>Ürün</span><span class="right">Adet</span><span class="right">Ciro</span><span class="right">Kâr</span></div><div id="productReport"></div>
 <div class="line"></div>
 <h3>Gün Gün Hangi Ürün Satıldı?</h3>
 <div class="dateNav" style="margin:10px 0"><button id="productDayPrev" aria-label="Önceki gün">‹</button><input type="date" id="productDay" aria-label="Ürün raporu tarihi"><button id="productDayNext" aria-label="Sonraki gün">›</button></div>
 <div class="row between" style="margin-bottom:8px"><span class="sub" id="productDayLabel">Günlük ürünler</span><b id="productDayTotal">0 ₺</b></div>
 <div class="reportRow headrow"><span>Ürün</span><span class="right">Adet</span><span class="right">Ciro</span><span class="right">Kâr</span></div>
 <div id="productDayRows"></div>
-<p class="tiny">Eski V3 ciro girişleri ürün adı içermediğinden ürün listesine ayrılamaz.</p>
+
 </div>
 <div class="card"><h2>Aylık Sabit Giderler</h2><p class="sub">Kira, maaş, elektrik gibi aylık giderleri ekle. Seçili dönemde her gün ayın gün sayısına göre paylaştırılır.</p><input id="fixedName" placeholder="Gider adı (örn. kira)" maxlength="90"><div class="row" style="margin-top:8px"><input id="fixedAmount" type="number" inputmode="decimal" min="0" placeholder="Aylık tutar ₺"><button class="btn good" id="fixedAdd">Ekle</button></div><div id="fixedRows" style="margin-top:10px"></div></div>
 <div class="card"><h2>Günlük Ekstra Gider</h2><div class="stack"><input id="expenseDay" type="date"><input id="expenseName" placeholder="Harcama açıklaması" maxlength="90"><div class="row"><input id="expenseAmount" type="number" min="0" inputmode="decimal" placeholder="Tutar ₺"><button class="btn good" id="expenseAdd">Ekle</button></div></div><div id="extraSummary" class="sub" style="margin-top:10px"></div><p class="sub">Ürün kârında zaten hesaba katılan malzeme maliyetini ikinci kez gider yazma.</p></div>
@@ -113,7 +118,7 @@ input,select{width:100%;min-width:0;border:1px solid #d4deea;border-radius:9px;b
 <div class="card"><h2>Ürünlerim</h2><p class="sub">Silinen ürünler satış ekranından kaldırılır; eski satış kayıtları ve raporlar korunur.</p><div id="allProducts"></div></div>
 <div class="card"><h2>Kategoriler</h2><p class="sub">Kategori adını Düzenle ile değiştirebilirsin. Kategoriyi silersen satış ekranından gizlenir. İçindeki ürünler ve geçmiş satışlar silinmez; kategoriyi geri getirebilirsin.</p><div id="categoriesSettings"></div><div class="line"></div><h3>Yeni Kategori Ekle</h3><div class="row"><input id="categoryName" placeholder="Kategori adı" maxlength="36"><button class="btn good" id="categoryAdd">Ekle</button></div></div>
 <div class="card"><h2>Yedekleme ve Verileri Koruma</h2><button class="btn good" id="downloadBackup" style="width:100%">Tüm Verileri JSON Yedekle</button><label style="margin-top:12px">Yedekten geri yükle</label><input id="restoreFile" type="file" accept=".json,application/json"><p class="note">Yedek almadan uygulamayı silme veya Safari verilerini temizleme. Geri yükleme mevcut kayıtların yerine geçer.</p></div>
-<details class="card"><summary><b>V3 Eski Kayıtlar (Arşiv)</b></summary><p class="sub">Eski gelir kayıtları toplam ciroya dahildir. Eski gider ve şahsi gider kayıtları yalnızca arşivde saklanır.</p><div id="legacyArchive"></div></details>
+<details class="card"><summary><b>Geçmiş Kayıt Arşivi</b></summary><div id="legacyArchive"></div></details>
 </section>
 </main>
 <script>
@@ -217,18 +222,29 @@ function renderShop(){const today=rangeStats({start:dayKey(),end:dayKey()});setM
  document.querySelectorAll(".pay").forEach(b=>b.classList.toggle("active",b.dataset.payment===payment))}
 function renderFinance(){const range=period(),s=rangeStats(range);$("customRange").hidden=$("reportPeriod").value!=="custom";
  $("rangeLabel").textContent=showDay(range.start)+(range.start!==range.end?" — "+showDay(range.end):"");
- for(const [k,v] of [["rSales",s.revenue],["rGross",s.profit],["rFixed",s.fixed],["rExtra",s.extra],["rFee",s.fee],["rOldRevenue",s.oldRevenue],["rAverage",s.days?s.revenue/s.days:0],["rCash",s.cash],["rCard",s.card],["rUnknown",s.unknown]])setMoney(k,v);setNet("rNet",s.net);
+ for(const [k,v] of [["rSales",s.revenue],["rGross",s.profit],["rFixed",s.fixed],["rExtra",s.extra],["rFee",s.fee],["rAverage",s.days?s.revenue/s.days:0],["rCash",s.cash],["rCard",s.card],["rUnknown",s.unknown]])setMoney(k,v);setNet("rNet",s.net);
  const fixedPerDay=monthFixed(monthOf(range.end))/monthDays(monthOf(range.end));
  const usableMargin=s.revenue>0?(s.profit-s.fee)/s.revenue:0;
  $("rTarget").textContent=fixedPerDay<=0?money(0):usableMargin>0?money(fixedPerDay/usableMargin):"Kâr marjı verisi gerekli";
  const grouped=new Map();for(const r of v5Sales(range))for(const x of r.items){const key=String(x.productId||x.name),g=grouped.get(key)||{name:x.name,qty:0,revenue:0,profit:0};g.qty+=Number(x.qty);g.revenue+=x.qty*x.price;g.profit+=x.qty*unitProfit(x)-(r.payment==="card"?round(x.qty*x.price*.03):0);grouped.set(key,g)}
  $("productReport").innerHTML=[...grouped.values()].sort((a,b)=>b.qty-a.qty).map(x=>`<div class="reportRow"><b>${esc(x.name)}</b><span class="right">${x.qty}</span><span class="right">${money(x.revenue)}</span><span class="right green">${money(x.profit)}</span></div>`).join("")||'<div class="empty">Bu dönemde V5 ürün satışı yok.</div>';
- const legacy=v4Sales(range);$("legacyReport").innerHTML=legacy.length?`<div class="note" style="margin-top:10px"><b>V4'ten gelen kategori satışları</b><br>Ürün adı ayrı ayrı kaydedilmediği için ürün raporuna dağıtılmadı; toplam ciroya ve kâra dahildir: ${money(sum(legacy,"amount"))} ciro, ${money(sum(legacy,"profit"))} kâr.</div>`:"";
- if(s.oldRevenue)$("legacyReport").innerHTML+=`<div class="note" style="margin-top:8px"><b>Eski ciro</b><br>${money(s.oldRevenue)} · Eski kayıtlardan okunur, tekrar satış oluşturulmaz.</div>`;
+ renderDailyCiro(range);
  renderProductDay();
  const thisMonth=monthOf(dayKey());$("fixedRows").innerHTML=old().fixed.filter(x=>x.startMonth<=thisMonth&&(!x.endMonth||x.endMonth>=thisMonth)).map(x=>`<div class="entry"><div class="row"><div class="grow"><b>${esc(x.name)}</b><div class="sub">${money(x.amount)}/ay ${x.endMonth?"· Ay sonunda duracak":""}</div></div><button class="btn soft small" data-fix-edit="${esc(x.id)}">Düzenle</button><button class="btn soft small" data-fix-stop="${esc(x.id)}" ${x.endMonth?"disabled":""}>Durdur</button></div></div>`).join("")||'<div class="empty">Sabit gider eklenmemiş.</div>';
  $("extraSummary").textContent="Seçilen gider günü: "+showDay($("expenseDay").value)+" · "+money(sum(extras({start:$("expenseDay").value,end:$("expenseDay").value}),"amount"));
  setMoney("totalDebt",sum(db.debts,"remaining"));renderDebts()}
+function renderDailyCiro(range){
+ const dates=[];let d=range.end;
+ // Maximum one year on screen; older dates remain available via period selection.
+ while(d>=range.start&&dates.length<366){dates.push(d);d=dayAdd(d,-1)}
+ $("dailyCiroRows").innerHTML=dates.map(day=>{
+  const s=rangeStats({start:day,end:day});
+  const earned=round(s.profit-s.fee);
+  return `<div class="day-report-row"><b>${showDay(day)}</b><span class="right">${money(s.revenue)}</span><span class="right ${earned<0?"redtext":"green"}">${money(earned)}</span></div>`;
+ }).join("")||'<div class="empty">Bu dönemde gün bulunmuyor.</div>';
+ const note=$("dailyCiroMore");note.hidden=!(d>=range.start);
+ note.textContent=note.hidden?"":"Son 366 gün gösteriliyor. Daha eski günler için tarih aralığını değiştir.";
+}
 function renderProductDay(){
  const day=$("productDay").value||dayKey();
  $("productDayLabel").textContent=showDay(day)+" · Ürün satışları";
@@ -265,7 +281,7 @@ function renderTransactions(){const day=$("txDay").value||dayKey(),r={start:day,
  const showDeleted=$("showDeleted").checked;
  const currentReceipts=current().receipts.filter(x=>entryDay(x)===day&&(showDeleted||!x.deleted)).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
  const legacy=old().sales.filter(x=>entryDay(x)===day&&(showDeleted||!x.voided));
- $("txSalesList").innerHTML=currentReceipts.map(r=>{const st=receiptStats(r);return `<div class="entry"><div class="row between"><b>${showDay(entryDay(r))} · ${r.payment==="cash"?"💵 Nakit":r.payment==="card"?"💳 Kart":"Ödeme belirsiz"}</b><span class="tag">${st.qty} adet</span></div><div class="sub" style="margin:5px 0">${(r.items||[]).map(x=>esc(x.name)+" × "+x.qty).join(", ")}</div><div class="row between"><b class="price">${money(st.revenue)}</b><span class="green">Kart kesintisi sonrası kâr ${money(st.profit-(r.payment==="card"?round(st.revenue*.03):0))}</span></div><div class="actions">${r.deleted?`<button class="btn soft small" data-restore-sale="${esc(r.id)}">Geri Yükle</button>`:`<button class="btn soft small" data-edit-sale="${esc(r.id)}">Düzenle</button><button class="btn soft small" data-delete-sale="${esc(r.id)}">Sil</button>`}</div></div>`}).join("")+
+ $("txSalesList").innerHTML=currentReceipts.map(r=>{const st=receiptStats(r);return `<div class="entry"><div class="row between"><b>${showDay(entryDay(r))} · ${r.payment==="cash"?"💵 Nakit":r.payment==="card"?"💳 Kart":"Ödeme belirsiz"}</b><span class="tag">${st.qty} adet</span></div><div class="sub" style="margin:5px 0">${(r.items||[]).map(x=>esc(x.name)+" × "+x.qty).join(", ")}</div><div class="row between"><b class="price">${money(st.revenue)}</b><span class="green">Kâr ${money(st.profit-(r.payment==="card"?round(st.revenue*.03):0))}</span></div><div class="actions">${r.deleted?`<button class="btn soft small" data-restore-sale="${esc(r.id)}">Geri Yükle</button>`:`<button class="btn soft small" data-edit-sale="${esc(r.id)}">Düzenle</button><button class="btn soft small" data-delete-sale="${esc(r.id)}">Sil</button>`}</div></div>`}).join("")+
  legacy.map(x=>`<div class="entry"><div class="row between"><b>Eski V4: ${esc(x.categoryName||catName(x.category))}</b><span class="tag">Ödeme belirsiz</span></div><div class="sub">${Number(x.qty||1)} adet · Eski kategori kaydı</div><div class="row between"><b>${money(x.amount)}</b><span class="green">Kâr ${money(x.profit)}</span></div><div class="actions">${x.voided?`<button class="btn soft small" data-restore-old="${esc(x.id)}">Geri Yükle</button>`:`<button class="btn soft small" data-edit-old="${esc(x.id)}">Düzenle</button><button class="btn soft small" data-delete-old="${esc(x.id)}">Sil</button>`}</div></div>`).join("")||'<div class="empty">Bu tarihte satış kaydı yok.</div>';
  $("txExpenses").innerHTML=old().extras.filter(x=>entryDay(x)===day&&!x.voided).map(x=>`<div class="entry row"><div class="grow"><b>${esc(x.name)}</b><div class="sub">${money(x.amount)}</div></div><button class="btn soft small" data-edit-expense="${esc(x.id)}">Düzenle</button><button class="btn soft small" data-delete-expense="${esc(x.id)}">Sil</button></div>`).join("")||'<div class="empty">Bu gün ekstra gider yok.</div>';
  renderEditPanel()}
